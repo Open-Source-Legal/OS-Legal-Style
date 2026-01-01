@@ -28,32 +28,31 @@ export const collectionCardStyles = `
   outline-offset: 2px;
 }
 
-/* Icon */
-.oc-collection-card__icon {
-  width: 52px;
-  height: 52px;
+/* Avatar - uniform circular treatment for icons and images */
+.oc-collection-card__icon,
+.oc-collection-card__image {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--oc-bg-surface-hover, #F8FAFC);
-  border-radius: var(--oc-radius-md, 10px);
+  overflow: hidden;
+}
+
+.oc-collection-card__icon {
+  background: var(--oc-bg-surface-hover, #F1F5F9);
   color: var(--oc-fg-secondary, #64748B);
-  flex-shrink: 0;
 }
 
 .oc-collection-card__icon svg {
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
 }
 
-/* Image thumbnail - clean, minimal style */
 .oc-collection-card__image {
-  width: 52px;
-  height: 52px;
-  border-radius: var(--oc-radius-md, 10px);
-  overflow: hidden;
-  flex-shrink: 0;
-  background: var(--oc-bg-surface-hover, #F8FAFC);
+  background: var(--oc-bg-surface-hover, #F1F5F9);
 }
 
 .oc-collection-card__image img {
@@ -197,13 +196,13 @@ export const collectionCardStyles = `
 
   .oc-collection-card__icon,
   .oc-collection-card__image {
-    width: 44px;
-    height: 44px;
+    width: 36px;
+    height: 36px;
   }
 
   .oc-collection-card__icon svg {
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
   }
 
   .oc-collection-card__title {

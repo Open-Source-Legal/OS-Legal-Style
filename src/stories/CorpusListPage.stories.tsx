@@ -162,6 +162,7 @@ const sampleCorpuses: Corpus[] = [
     labelCount: 18,
     lastUpdated: '5 days ago',
     category: 'knowledge',
+    image: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=100&h=100&fit=crop',
   },
   {
     id: '5',
@@ -201,6 +202,7 @@ const sampleCorpuses: Corpus[] = [
     labelCount: 34,
     lastUpdated: 'Just now',
     category: 'case-law',
+    image: 'https://images.unsplash.com/photo-1505664194779-8beaceb93744?w=100&h=100&fit=crop',
   },
 ];
 
@@ -563,6 +565,7 @@ export const Default: StoryObj = {
                   <CollectionCard
                     key={corpus.id}
                     type={corpus.category}
+                    image={corpus.image}
                     status={`${getVisibilityStatus(corpus.visibility)} • Updated ${corpus.lastUpdated}`}
                     title={corpus.title}
                     description={corpus.description}
