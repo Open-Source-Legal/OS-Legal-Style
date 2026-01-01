@@ -77,3 +77,7 @@ All components follow these conventions:
 ## Signature Components
 
 The `Node` component family is unique to this design system — coral circles echoing the OpenContracts logo's highlighted vertices. Used to visualize connections and relationships in the legal document UI.
+
+## Git Commit Guidelines
+
+**Do NOT include Claude credit in commits.** No "Generated with Claude Code" or "Co-Authored-By: Claude" lines. Keep commit messages clean and focused on the changes.
