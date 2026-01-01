@@ -4,12 +4,17 @@ import { NavBar } from '../NavBar';
 import { Sidebar, SidebarHeader, SidebarNav, SidebarItem, SidebarSection, SidebarFooter } from '../Sidebar';
 import { PageHeader } from '../PageHeader';
 import { SearchInput } from '../SearchInput';
+import { SearchBox } from '../SearchBox';
 import { Chip } from '../Chip';
 import { Button, IconButton } from '../Button';
 import { Card, CardHeader, CardBody } from '../Card';
 import { EmptyState } from '../EmptyState';
 import { HStack, VStack, Spacer } from '../Stack';
 import { Avatar, AvatarGroup } from '../Avatar';
+import { FilterTabs } from '../FilterTabs';
+import { StatBlock, StatGrid } from '../StatBlock';
+import { Popover } from '../Popover';
+import { Checkbox } from '../Checkbox';
 import {
   DiscussionList,
   DiscussionItem,
@@ -97,6 +102,20 @@ const ExtractIcon = () => (
 const DiscussionIcon = () => (
   <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
     <path d="M15 11.25a1.5 1.5 0 01-1.5 1.5H5.25L2.25 15.75V4.5A1.5 1.5 0 013.75 3h9.75a1.5 1.5 0 011.5 1.5v6.75z" />
+  </svg>
+);
+
+const ChatIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M6 9h.01M9 9h.01M12 9h.01M15.75 9a6.75 6.75 0 11-3.638-5.995" />
+    <path d="M15.75 3v3h-3" />
+  </svg>
+);
+
+const HistoryIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M2.25 9a6.75 6.75 0 1113.5 0 6.75 6.75 0 01-13.5 0z" />
+    <path d="M9 5.25V9l2.25 2.25" />
   </svg>
 );
 
@@ -1716,6 +1735,1911 @@ const NewFolderIcon = () => (
     <path d="M12 9a.5.5 0 01.5.5v1h1a.5.5 0 010 1h-1v1a.5.5 0 01-1 0v-1h-1a.5.5 0 010-1h1v-1A.5.5 0 0112 9z" />
   </svg>
 );
+
+// ═══════════════════════════════════════════════════════════════
+// REIMAGINED CORPUS DETAIL PAGE
+// ═══════════════════════════════════════════════════════════════
+
+const reimaginedPageStyles = `
+  .corpus-detail-page {
+    min-height: 100vh;
+    background: var(--oc-bg-canvas, #FAFAFA);
+    font-family: var(--oc-font-family, 'Inter', -apple-system, BlinkMacSystemFont, sans-serif);
+  }
+
+  .corpus-detail-layout {
+    display: flex;
+    min-height: calc(100vh - 56px);
+  }
+
+  /* Refined sidebar */
+  .corpus-detail-sidebar {
+    width: 280px;
+    min-width: 280px;
+    background: var(--oc-bg-surface, white);
+    border-right: 1px solid var(--oc-border-default, #E2E8F0);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .corpus-detail-sidebar__header {
+    padding: 24px 20px;
+    border-bottom: 1px solid var(--oc-border-default, #E2E8F0);
+  }
+
+  .corpus-detail-sidebar__avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #0F766E 0%, #14B8A6 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+
+  .corpus-detail-sidebar__name {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    font-size: 18px;
+    font-weight: 400;
+    color: #1E293B;
+    margin: 0 0 4px;
+  }
+
+  .corpus-detail-sidebar__meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--oc-fg-tertiary, #94A3B8);
+  }
+
+  .corpus-detail-sidebar__visibility {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    background: rgba(15, 118, 110, 0.1);
+    color: #0F766E;
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+
+  .corpus-detail-sidebar__description {
+    margin-top: 12px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--oc-fg-secondary, #475569);
+  }
+
+  .corpus-detail-sidebar__section {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--oc-border-default, #E2E8F0);
+  }
+
+  .corpus-detail-sidebar__section-title {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--oc-fg-tertiary, #94A3B8);
+    margin: 0 0 12px;
+  }
+
+  .corpus-detail-sidebar__contributors {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .corpus-detail-sidebar__contributor-count {
+    font-size: 13px;
+    color: var(--oc-fg-secondary, #475569);
+  }
+
+  .corpus-detail-sidebar__quick-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .corpus-detail-sidebar__action {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    font-size: 14px;
+    color: var(--oc-fg-secondary, #475569);
+    background: transparent;
+    border: none;
+    border-radius: var(--oc-radius-md, 8px);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-align: left;
+    width: 100%;
+  }
+
+  .corpus-detail-sidebar__action:hover {
+    background: var(--oc-bg-surface-hover, #F1F5F9);
+    color: var(--oc-fg-primary, #1E293B);
+  }
+
+  .corpus-detail-sidebar__action-icon {
+    width: 18px;
+    height: 18px;
+    opacity: 0.6;
+  }
+
+  .corpus-detail-sidebar__footer {
+    margin-top: auto;
+    padding: 16px 20px;
+    border-top: 1px solid var(--oc-border-default, #E2E8F0);
+  }
+
+  /* Section navigation */
+  .corpus-section-nav {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+
+  .corpus-section-nav__group {
+    padding: 12px 12px 16px;
+    border-bottom: 1px solid var(--oc-border-default, #E2E8F0);
+  }
+
+  .corpus-section-nav__group:last-child {
+    border-bottom: none;
+  }
+
+  .corpus-section-nav__label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--oc-fg-tertiary, #94A3B8);
+    padding: 0 8px;
+    margin-bottom: 8px;
+  }
+
+  .corpus-section-nav__item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 14px;
+    color: var(--oc-fg-secondary, #475569);
+    background: transparent;
+    border: none;
+    border-radius: var(--oc-radius-md, 8px);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-align: left;
+  }
+
+  .corpus-section-nav__item:hover {
+    background: var(--oc-bg-surface-hover, #F1F5F9);
+    color: var(--oc-fg-primary, #1E293B);
+  }
+
+  .corpus-section-nav__item--active {
+    background: rgba(15, 118, 110, 0.08);
+    color: var(--oc-accent, #0F766E);
+    font-weight: 500;
+  }
+
+  .corpus-section-nav__icon {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    opacity: 0.7;
+  }
+
+  .corpus-section-nav__item--active .corpus-section-nav__icon {
+    opacity: 1;
+  }
+
+  .corpus-section-nav__badge {
+    margin-left: auto;
+    padding: 2px 8px;
+    font-size: 11px;
+    font-weight: 600;
+    background: var(--oc-bg-canvas, #F1F5F9);
+    color: var(--oc-fg-tertiary, #64748B);
+    border-radius: 10px;
+  }
+
+  .corpus-section-nav__item--active .corpus-section-nav__badge {
+    background: rgba(15, 118, 110, 0.15);
+    color: var(--oc-accent, #0F766E);
+  }
+
+  /* Home content (markdown-like) */
+  .corpus-home-content {
+    background: var(--oc-bg-surface, white);
+    border: 1px solid var(--oc-border-default, #E2E8F0);
+    border-radius: var(--oc-radius-lg, 12px);
+    padding: 32px;
+    margin-top: 32px;
+  }
+
+  .corpus-home-content h2 {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    font-size: 24px;
+    font-weight: 400;
+    color: #1E293B;
+    margin: 0 0 16px;
+  }
+
+  .corpus-home-content h3 {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    font-size: 18px;
+    font-weight: 400;
+    color: #0F766E;
+    margin: 28px 0 12px;
+  }
+
+  .corpus-home-content h3:first-of-type {
+    margin-top: 24px;
+  }
+
+  .corpus-home-content p {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--oc-fg-secondary, #475569);
+    margin: 0 0 16px;
+  }
+
+  .corpus-home-content ul {
+    margin: 0 0 16px;
+    padding-left: 24px;
+  }
+
+  .corpus-home-content li {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--oc-fg-secondary, #475569);
+    margin-bottom: 8px;
+  }
+
+  .corpus-home-content code {
+    font-family: 'SF Mono', Monaco, monospace;
+    font-size: 13px;
+    background: var(--oc-bg-canvas, #F1F5F9);
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: #0F766E;
+  }
+
+  .corpus-home-content--expanded {
+    padding: 40px;
+  }
+
+  .corpus-home-content--expanded h2 {
+    font-size: 28px;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--oc-border-default, #E2E8F0);
+  }
+
+  .corpus-home-content strong {
+    color: var(--oc-fg-primary, #1E293B);
+    font-weight: 600;
+  }
+
+  /* Section placeholder cards */
+  .corpus-section-placeholder {
+    background: var(--oc-bg-surface, white);
+    border: 1px solid var(--oc-border-default, #E2E8F0);
+    border-radius: var(--oc-radius-lg, 12px);
+    padding: 48px 32px;
+    text-align: center;
+  }
+
+  .corpus-section-placeholder__icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 20px;
+    background: linear-gradient(135deg, rgba(15, 118, 110, 0.1) 0%, rgba(20, 184, 166, 0.1) 100%);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #0F766E;
+  }
+
+  .corpus-section-placeholder__title {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    font-size: 24px;
+    font-weight: 400;
+    color: #1E293B;
+    margin: 0 0 12px;
+  }
+
+  .corpus-section-placeholder__description {
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--oc-fg-secondary, #64748B);
+    max-width: 400px;
+    margin: 0 auto 24px;
+  }
+
+  /* Floating chat bar */
+  .corpus-chat-bar {
+    position: relative;
+    margin-top: 32px;
+  }
+
+  .corpus-detail-hero .corpus-chat-bar {
+    margin-top: 28px;
+  }
+
+  .corpus-chat-bar__container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--oc-bg-surface, white);
+    border: 1px solid var(--oc-border-default, #E2E8F0);
+    border-radius: 24px;
+    padding: 8px 8px 8px 20px;
+    box-shadow: var(--oc-shadow-md, 0 4px 12px rgba(15, 23, 42, 0.08));
+    transition: all 0.2s ease;
+  }
+
+  .corpus-chat-bar__container:focus-within {
+    border-color: var(--oc-accent, #0F766E);
+    box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.1), var(--oc-shadow-md, 0 4px 12px rgba(15, 23, 42, 0.08));
+  }
+
+  .corpus-chat-bar__input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: 15px;
+    color: var(--oc-fg-primary, #1E293B);
+    outline: none;
+    min-height: 24px;
+    resize: none;
+  }
+
+  .corpus-chat-bar__input::placeholder {
+    color: var(--oc-fg-tertiary, #94A3B8);
+  }
+
+  .corpus-chat-bar__actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .corpus-chat-bar__btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+  }
+
+  .corpus-chat-bar__btn--history {
+    background: var(--oc-bg-canvas, #F1F5F9);
+    color: var(--oc-fg-secondary, #64748B);
+  }
+
+  .corpus-chat-bar__btn--history:hover {
+    background: var(--oc-bg-surface-hover, #E2E8F0);
+    color: var(--oc-fg-primary, #1E293B);
+  }
+
+  .corpus-chat-bar__btn--send {
+    background: var(--oc-accent, #0F766E);
+    color: white;
+  }
+
+  .corpus-chat-bar__btn--send:hover {
+    background: #0D6660;
+  }
+
+  .corpus-chat-bar__btn--send:disabled {
+    background: var(--oc-bg-canvas, #F1F5F9);
+    color: var(--oc-fg-tertiary, #94A3B8);
+    cursor: not-allowed;
+  }
+
+  .corpus-chat-bar__hint {
+    text-align: center;
+    font-size: 12px;
+    color: var(--oc-fg-tertiary, #94A3B8);
+    margin-top: 12px;
+  }
+
+  /* Main content area */
+  .corpus-detail-main {
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  .corpus-detail-content {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+
+  /* Hero section */
+  .corpus-detail-hero {
+    margin-bottom: 48px;
+  }
+
+  .corpus-detail-hero__breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--oc-fg-tertiary, #94A3B8);
+    margin-bottom: 16px;
+  }
+
+  .corpus-detail-hero__breadcrumb a {
+    color: var(--oc-fg-secondary, #475569);
+    text-decoration: none;
+  }
+
+  .corpus-detail-hero__breadcrumb a:hover {
+    color: var(--oc-accent, #0F766E);
+  }
+
+  .corpus-detail-hero__breadcrumb-sep {
+    color: var(--oc-border-strong, #CBD5E1);
+  }
+
+  .corpus-detail-hero__title {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    font-size: 42px;
+    font-weight: 400;
+    line-height: 1.2;
+    color: #1E293B;
+    margin: 0 0 16px;
+  }
+
+  .corpus-detail-hero__title span {
+    color: #0F766E;
+  }
+
+  .corpus-detail-hero__subtitle {
+    font-size: 17px;
+    line-height: 1.6;
+    color: #64748B;
+    margin: 0 0 32px;
+    max-width: 600px;
+  }
+
+  .corpus-detail-hero__search {
+    margin-bottom: 16px;
+  }
+
+  /* Section headers */
+  .corpus-detail-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+
+  .corpus-detail-section-title {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    font-size: 24px;
+    font-weight: 400;
+    color: #0F766E;
+    margin: 0;
+  }
+
+  /* Document cards grid */
+  .corpus-docs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+  }
+
+  .corpus-doc-card {
+    background: var(--oc-bg-surface, white);
+    border: 1px solid var(--oc-border-default, #E2E8F0);
+    border-radius: var(--oc-radius-lg, 12px);
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+  }
+
+  .corpus-doc-card:hover {
+    border-color: var(--oc-border-strong, #CBD5E1);
+    box-shadow: var(--oc-shadow-md, 0 4px 12px rgba(15, 23, 42, 0.08));
+    transform: translateY(-2px);
+  }
+
+  .corpus-doc-card__checkbox {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    z-index: 2;
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+
+  .corpus-doc-card:hover .corpus-doc-card__checkbox,
+  .corpus-doc-card--selected .corpus-doc-card__checkbox {
+    opacity: 1;
+  }
+
+  .corpus-doc-card--selected {
+    border-color: var(--oc-accent, #0F766E);
+    box-shadow: 0 0 0 1px var(--oc-accent, #0F766E);
+  }
+
+  .corpus-doc-card__preview {
+    height: 140px;
+    background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .corpus-doc-card__preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+  }
+
+  .corpus-doc-card__preview-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: var(--oc-fg-tertiary, #94A3B8);
+  }
+
+  .corpus-doc-card__type-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+  }
+
+  .corpus-doc-card__body {
+    padding: 16px;
+  }
+
+  .corpus-doc-card__name {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--oc-fg-primary, #1E293B);
+    margin: 0 0 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .corpus-doc-card__meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--oc-fg-tertiary, #94A3B8);
+    margin-bottom: 12px;
+  }
+
+  .corpus-doc-card__meta-sep {
+    width: 3px;
+    height: 3px;
+    background: var(--oc-fg-tertiary, #94A3B8);
+    border-radius: 50%;
+  }
+
+  .corpus-doc-card__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .corpus-doc-card__user {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--oc-fg-secondary, #475569);
+  }
+
+  /* Action dropdown */
+  .corpus-action-dropdown {
+    min-width: 200px;
+    padding: 6px;
+    background: white;
+    border: 1px solid var(--oc-border-default, #E2E8F0);
+    border-radius: var(--oc-radius-lg, 12px);
+    box-shadow: var(--oc-shadow-lg, 0 8px 16px rgba(15, 23, 42, 0.08));
+  }
+
+  .corpus-action-dropdown__header {
+    padding: 8px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--oc-fg-tertiary, #94A3B8);
+    border-bottom: 1px solid var(--oc-border-default, #E2E8F0);
+    margin: 0 -6px 6px;
+    padding-left: 18px;
+    padding-right: 18px;
+    background: var(--oc-bg-canvas, #FAFAFA);
+  }
+
+  .corpus-action-dropdown__item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 14px;
+    color: var(--oc-fg-primary, #1E293B);
+    background: transparent;
+    border: none;
+    border-radius: var(--oc-radius-md, 8px);
+    cursor: pointer;
+    transition: background 0.1s;
+    text-align: left;
+  }
+
+  .corpus-action-dropdown__item:hover {
+    background: var(--oc-bg-surface-hover, #F1F5F9);
+  }
+
+  .corpus-action-dropdown__item--danger {
+    color: var(--oc-error, #DC2626);
+  }
+
+  .corpus-action-dropdown__item--danger:hover {
+    background: #FEF2F2;
+  }
+
+  .corpus-action-dropdown__separator {
+    height: 1px;
+    background: var(--oc-border-default, #E2E8F0);
+    margin: 6px 0;
+  }
+
+  /* File system layout */
+  .corpus-fs-layout {
+    display: flex;
+    gap: 0;
+    background: var(--oc-bg-surface, white);
+    border: 1px solid var(--oc-border-default, #E2E8F0);
+    border-radius: var(--oc-radius-lg, 12px);
+    overflow: hidden;
+    min-height: 400px;
+  }
+
+  .corpus-fs-sidebar {
+    width: 240px;
+    min-width: 240px;
+    background: var(--oc-bg-canvas, #FAFAFA);
+    border-right: 1px solid var(--oc-border-default, #E2E8F0);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .corpus-fs-sidebar__header {
+    padding: 12px 16px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--oc-fg-tertiary, #94A3B8);
+    border-bottom: 1px solid var(--oc-border-default, #E2E8F0);
+    background: white;
+  }
+
+  .corpus-fs-sidebar__tree {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px 0;
+  }
+
+  /* Folder tree items */
+  .folder-tree-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    font-size: 14px;
+    color: var(--oc-fg-secondary, #475569);
+    cursor: pointer;
+    transition: all 0.1s;
+    border: none;
+    background: transparent;
+    width: 100%;
+    text-align: left;
+  }
+
+  .folder-tree-item:hover {
+    background: var(--oc-bg-surface-hover, #F1F5F9);
+    color: var(--oc-fg-primary, #1E293B);
+  }
+
+  .folder-tree-item--active {
+    background: rgba(15, 118, 110, 0.08);
+    color: var(--oc-accent, #0F766E);
+    font-weight: 500;
+  }
+
+  .folder-tree-item--nested {
+    padding-left: 32px;
+  }
+
+  .folder-tree-item--nested-2 {
+    padding-left: 48px;
+  }
+
+  .folder-tree-item__icon {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+  }
+
+  .folder-tree-item__expand {
+    width: 16px;
+    height: 16px;
+    margin-left: auto;
+    opacity: 0.5;
+    transition: transform 0.15s;
+  }
+
+  .folder-tree-item__expand--open {
+    transform: rotate(90deg);
+  }
+
+  /* File system main content */
+  .corpus-fs-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .corpus-fs-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--oc-border-default, #E2E8F0);
+    background: white;
+  }
+
+  .corpus-fs-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex: 1;
+  }
+
+  .corpus-fs-breadcrumb__item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 14px;
+    color: var(--oc-fg-secondary, #475569);
+    background: none;
+    border: none;
+    padding: 4px 8px;
+    border-radius: var(--oc-radius-sm, 6px);
+    cursor: pointer;
+    transition: all 0.1s;
+  }
+
+  .corpus-fs-breadcrumb__item:hover {
+    background: var(--oc-bg-surface-hover, #F1F5F9);
+    color: var(--oc-fg-primary, #1E293B);
+  }
+
+  .corpus-fs-breadcrumb__item--current {
+    font-weight: 500;
+    color: var(--oc-fg-primary, #1E293B);
+    cursor: default;
+  }
+
+  .corpus-fs-breadcrumb__item--current:hover {
+    background: transparent;
+  }
+
+  .corpus-fs-breadcrumb__sep {
+    color: var(--oc-border-strong, #CBD5E1);
+    font-size: 12px;
+  }
+
+  .corpus-fs-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+  }
+
+  /* Folder cards in grid */
+  .corpus-folder-card {
+    background: var(--oc-bg-surface, white);
+    border: 1px solid var(--oc-border-default, #E2E8F0);
+    border-radius: var(--oc-radius-lg, 12px);
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .corpus-folder-card:hover {
+    border-color: var(--oc-border-strong, #CBD5E1);
+    box-shadow: var(--oc-shadow-sm, 0 2px 8px rgba(15, 23, 42, 0.06));
+    transform: translateY(-1px);
+  }
+
+  .corpus-folder-card__icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #D97706;
+    flex-shrink: 0;
+  }
+
+  .corpus-folder-card__content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .corpus-folder-card__name {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--oc-fg-primary, #1E293B);
+    margin: 0 0 2px;
+  }
+
+  .corpus-folder-card__meta {
+    font-size: 12px;
+    color: var(--oc-fg-tertiary, #94A3B8);
+  }
+
+  .corpus-folder-card__arrow {
+    color: var(--oc-fg-tertiary, #94A3B8);
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+
+  .corpus-folder-card:hover .corpus-folder-card__arrow {
+    opacity: 1;
+  }
+
+  /* Mixed grid for folders + docs */
+  .corpus-fs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+
+  .corpus-fs-grid--folders {
+    margin-bottom: 24px;
+  }
+
+  .corpus-fs-section-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--oc-fg-tertiary, #94A3B8);
+    margin: 0 0 12px;
+    padding: 0 4px;
+  }
+
+  /* Responsive */
+  @media (max-width: 1024px) {
+    .corpus-detail-sidebar {
+      display: none;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .corpus-fs-sidebar {
+      display: none;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .corpus-detail-content {
+      padding: 32px 16px 60px;
+    }
+
+    .corpus-detail-hero__title {
+      font-size: 32px;
+    }
+
+    .corpus-docs-grid,
+    .corpus-fs-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+`;
+
+// Icons for the redesigned page
+const ShareIcon2 = () => (
+  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="13.5" cy="4.5" r="2.25" />
+    <circle cx="4.5" cy="9" r="2.25" />
+    <circle cx="13.5" cy="13.5" r="2.25" />
+    <path d="M6.53 10.19l4.95 2.37M11.47 5.69l-4.94 2.12" />
+  </svg>
+);
+
+const DownloadIcon2 = () => (
+  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M15.75 11.25v3a1.5 1.5 0 01-1.5 1.5h-10.5a1.5 1.5 0 01-1.5-1.5v-3" />
+    <path d="M5.25 8.25L9 12l3.75-3.75" />
+    <path d="M9 12V2.25" />
+  </svg>
+);
+
+const LockIcon = () => (
+  <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+    <path fillRule="evenodd" d="M4 4V3a2 2 0 114 0v1h.5A1.5 1.5 0 0110 5.5v4A1.5 1.5 0 018.5 11h-5A1.5 1.5 0 012 9.5v-4A1.5 1.5 0 013.5 4H4zm1-1v1h2V3a1 1 0 00-2 0z" clipRule="evenodd" />
+  </svg>
+);
+
+const GlobeIcon = () => (
+  <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+    <path fillRule="evenodd" d="M6 12A6 6 0 106 0a6 6 0 000 12zm.5-10.98a5.01 5.01 0 012.77 8.46c.04-.16.08-.33.08-.48 0-1-.67-1.5-1.35-1.5-.35 0-.6-.1-.85-.3-.25-.2-.4-.5-.4-.7 0-.5.4-1 1-1 .67 0 1-.5 1-1 0-.5-.33-1-1-1.5-.33-.25-.67-.5-.67-1 0-.17.08-.33.2-.48.12-.15.3-.25.5-.35.08-.04.15-.1.22-.15zM4.52 9.73A5.01 5.01 0 015.5 1.02a4.48 4.48 0 00-.2.98c0 1 .67 1.5 1.35 1.5.35 0 .6.1.85.3.25.2.4.5.4.7 0 .5-.4 1-1 1-.67 0-1 .5-1 1 0 .5.33 1 1 1.5.33.25.67.5.67 1 0 .17-.08.33-.2.48-.12.15-.3.25-.5.35-.08.04-.15.1-.22.15a4.95 4.95 0 01-2.13-.25z" clipRule="evenodd" />
+  </svg>
+);
+
+const TrashIcon2 = () => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+    <path fillRule="evenodd" d="M14.5 3a1 1 0 01-1 1H13v9a2 2 0 01-2 2H5a2 2 0 01-2-2V4h-.5a1 1 0 01-1-1V2a1 1 0 011-1H6a1 1 0 011-1h2a1 1 0 011 1h3.5a1 1 0 011 1v1zM4.118 4L4 4.059V13a1 1 0 001 1h6a1 1 0 001-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z" clipRule="evenodd" />
+  </svg>
+);
+
+const AddToCorpusIcon2 = () => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+    <path d="M.54 3.87L.5 3a2 2 0 012-2h3.672a2 2 0 011.414.586l.828.828A2 2 0 009.828 3H12.5a2 2 0 012 2v1H.5v-.13a.5.5 0 01.04-.13zM1.059 5H14.94l-.863 8.13A2 2 0 0112.095 15H3.905a2 2 0 01-1.983-1.87L1.059 5z" />
+  </svg>
+);
+
+const ChevronDownIcon2 = () => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+    <path d="M4.22 6.22a.75.75 0 011.06 0L8 8.94l2.72-2.72a.75.75 0 111.06 1.06l-3.25 3.25a.75.75 0 01-1.06 0L4.22 7.28a.75.75 0 010-1.06z" />
+  </svg>
+);
+
+const ChevronRightIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+    <path d="M6.22 4.22a.75.75 0 011.06 0l3.25 3.25a.75.75 0 010 1.06l-3.25 3.25a.75.75 0 01-1.06-1.06L8.94 8 6.22 5.28a.75.75 0 010-1.06z" />
+  </svg>
+);
+
+const FolderIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 18 18" fill="currentColor">
+    <path d="M1.5 4.5A1.5 1.5 0 013 3h4.172a1.5 1.5 0 011.06.44l.829.828a1.5 1.5 0 001.06.44H15a1.5 1.5 0 011.5 1.5v7.5a1.5 1.5 0 01-1.5 1.5H3a1.5 1.5 0 01-1.5-1.5v-9z" />
+  </svg>
+);
+
+const FolderOpenIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 18 18" fill="currentColor">
+    <path d="M1.5 4.5A1.5 1.5 0 013 3h4.172a1.5 1.5 0 011.06.44l.829.828a1.5 1.5 0 001.06.44H15a1.5 1.5 0 011.5 1.5v.5H3.75a1.5 1.5 0 00-1.326.794l-1.5 2.813A1.5 1.5 0 00.75 10.5v3a1.5 1.5 0 001.5 1.5h12a1.5 1.5 0 001.5-1.5v-6A1.5 1.5 0 0014.25 6H3.75L2.25 8.813V4.5z" />
+  </svg>
+);
+
+const HomeIcon2 = () => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+    <path d="M8.707 1.5a1 1 0 00-1.414 0L.646 8.146a.5.5 0 00.708.708L2 8.207V13.5A1.5 1.5 0 003.5 15h9a1.5 1.5 0 001.5-1.5V8.207l.646.647a.5.5 0 00.708-.708L8.707 1.5z" />
+  </svg>
+);
+
+const NewFolderIcon2 = () => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+    <path d="M.54 3.87L.5 3a2 2 0 012-2h3.672a2 2 0 011.414.586l.828.828A2 2 0 009.828 3H14a2 2 0 012 2v3H0V4.98a2 2 0 01.54-1.11zM16 7v5a2 2 0 01-2 2H2a2 2 0 01-2-2V7h16z" />
+    <path d="M12 9a.5.5 0 01.5.5v1h1a.5.5 0 010 1h-1v1a.5.5 0 01-1 0v-1h-1a.5.5 0 010-1h1v-1A.5.5 0 0112 9z" />
+  </svg>
+);
+
+// File system structure for the corpus
+interface FolderItem {
+  id: string;
+  name: string;
+  type: 'folder';
+  children?: (FolderItem | DocItem)[];
+  itemCount?: number;
+}
+
+interface DocItem {
+  id: string;
+  name: string;
+  type: 'document';
+  docType: string;
+  size: string;
+  pages: number;
+  uploadedBy: string;
+  uploadedAt: string;
+  thumbnail?: string;
+}
+
+type FSItem = FolderItem | DocItem;
+
+const corpusFileSystem: FSItem[] = [
+  {
+    id: 'contracts',
+    name: 'Contracts',
+    type: 'folder',
+    itemCount: 5,
+    children: [
+      {
+        id: 'active',
+        name: 'Active',
+        type: 'folder',
+        itemCount: 3,
+        children: [
+          { id: 'msa-2024', name: 'Master Services Agreement 2024.pdf', type: 'document', docType: 'pdf', size: '2.4 MB', pages: 24, uploadedBy: 'Sarah Chen', uploadedAt: '2 hours ago', thumbnail: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=300&h=400&fit=crop' },
+          { id: 'nda-template', name: 'NDA Template Standard.docx', type: 'document', docType: 'docx', size: '245 KB', pages: 4, uploadedBy: 'Mike Johnson', uploadedAt: '3 days ago', thumbnail: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=300&h=400&fit=crop' },
+          { id: 'employment-1', name: 'Employment Contract - J. Smith.pdf', type: 'document', docType: 'pdf', size: '890 KB', pages: 8, uploadedBy: 'Emma Davis', uploadedAt: '1 week ago', thumbnail: 'https://images.unsplash.com/photo-1521791136064-7986c2920216?w=300&h=400&fit=crop' },
+        ],
+      },
+      {
+        id: 'templates',
+        name: 'Templates',
+        type: 'folder',
+        itemCount: 2,
+        children: [
+          { id: 'standard-nda', name: 'Standard NDA v2.docx', type: 'document', docType: 'docx', size: '180 KB', pages: 3, uploadedBy: 'Sarah Chen', uploadedAt: '2 weeks ago', thumbnail: 'https://images.unsplash.com/photo-1568992687947-868a62a9f521?w=300&h=400&fit=crop' },
+          { id: 'sow-template', name: 'SOW Template.docx', type: 'document', docType: 'docx', size: '210 KB', pages: 5, uploadedBy: 'Mike Johnson', uploadedAt: '3 weeks ago' },
+        ],
+      },
+      {
+        id: 'archived',
+        name: 'Archived',
+        type: 'folder',
+        itemCount: 0,
+      },
+    ],
+  },
+  {
+    id: 'research',
+    name: 'Research',
+    type: 'folder',
+    itemCount: 1,
+    children: [
+      { id: 'case-analysis', name: 'Case Analysis Q4.pdf', type: 'document', docType: 'pdf', size: '1.5 MB', pages: 18, uploadedBy: 'John Scrudato', uploadedAt: '1 month ago', thumbnail: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=300&h=400&fit=crop' },
+    ],
+  },
+  {
+    id: 'admin',
+    name: 'Administrative',
+    type: 'folder',
+    itemCount: 0,
+  },
+];
+
+// Sample documents for the corpus (flat list for non-FS view)
+const corpusDocuments = [
+  {
+    id: '1',
+    name: 'Master Services Agreement 2024.pdf',
+    type: 'pdf',
+    size: '2.4 MB',
+    pages: 24,
+    uploadedBy: 'Sarah Chen',
+    uploadedAt: '2 hours ago',
+    thumbnail: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=300&h=400&fit=crop',
+  },
+  {
+    id: '2',
+    name: 'NDA Template Standard.docx',
+    type: 'docx',
+    size: '245 KB',
+    pages: 4,
+    uploadedBy: 'Mike Johnson',
+    uploadedAt: '3 days ago',
+    thumbnail: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=300&h=400&fit=crop',
+  },
+  {
+    id: '3',
+    name: 'Employment Contract - J. Smith.pdf',
+    type: 'pdf',
+    size: '890 KB',
+    pages: 8,
+    uploadedBy: 'Emma Davis',
+    uploadedAt: '1 week ago',
+    thumbnail: 'https://images.unsplash.com/photo-1521791136064-7986c2920216?w=300&h=400&fit=crop',
+  },
+  {
+    id: '4',
+    name: 'Vendor Agreement Q4 2024.pdf',
+    type: 'pdf',
+    size: '1.2 MB',
+    pages: 15,
+    uploadedBy: 'John Scrudato',
+    uploadedAt: '2 weeks ago',
+    thumbnail: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=300&h=400&fit=crop',
+  },
+];
+
+// Document card component for redesigned page
+interface CorpusDocCardProps {
+  doc: typeof corpusDocuments[0];
+  selected?: boolean;
+  onSelect?: (id: string) => void;
+}
+
+const CorpusDocCard: React.FC<CorpusDocCardProps> = ({ doc, selected = false, onSelect }) => {
+  return (
+    <div className={`corpus-doc-card ${selected ? 'corpus-doc-card--selected' : ''}`}>
+      <div className="corpus-doc-card__checkbox" onClick={(e) => e.stopPropagation()}>
+        <Checkbox checked={selected} onChange={() => onSelect?.(doc.id)} />
+      </div>
+      <div className="corpus-doc-card__preview">
+        {doc.thumbnail ? (
+          <img src={doc.thumbnail} alt={doc.name} />
+        ) : (
+          <div className="corpus-doc-card__preview-placeholder">
+            <DocumentIcon />
+          </div>
+        )}
+        <div className="corpus-doc-card__type-badge">
+          <Chip size="sm" variant="solid" color="default">
+            {doc.type.toUpperCase()}
+          </Chip>
+        </div>
+      </div>
+      <div className="corpus-doc-card__body">
+        <h3 className="corpus-doc-card__name" title={doc.name}>{doc.name}</h3>
+        <div className="corpus-doc-card__meta">
+          <span>{doc.size}</span>
+          <span className="corpus-doc-card__meta-sep" />
+          <span>{doc.pages} pages</span>
+        </div>
+        <div className="corpus-doc-card__footer">
+          <div className="corpus-doc-card__user">
+            <Avatar fallback={doc.uploadedBy.split(' ').map(n => n[0]).join('')} size="xs" />
+            <span>{doc.uploadedAt}</span>
+          </div>
+          <Chip size="sm" variant="soft" color="success">Processed</Chip>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Action dropdown for bulk actions
+interface CorpusActionDropdownProps {
+  selectedCount: number;
+  onClose: () => void;
+}
+
+const CorpusActionDropdown: React.FC<CorpusActionDropdownProps> = ({ selectedCount, onClose }) => {
+  return (
+    <div className="corpus-action-dropdown">
+      <div className="corpus-action-dropdown__header">
+        {selectedCount} document{selectedCount !== 1 ? 's' : ''} selected
+      </div>
+      <button className="corpus-action-dropdown__item" onClick={onClose}>
+        <DownloadIcon2 />
+        Download Selected
+      </button>
+      <button className="corpus-action-dropdown__item" onClick={onClose}>
+        <AddToCorpusIcon2 />
+        Move to Folder
+      </button>
+      <div className="corpus-action-dropdown__separator" />
+      <button className="corpus-action-dropdown__item corpus-action-dropdown__item--danger" onClick={onClose}>
+        <TrashIcon2 />
+        Delete Selected
+      </button>
+    </div>
+  );
+};
+
+// Folder card component
+interface FolderCardProps {
+  folder: FolderItem;
+  onClick: () => void;
+}
+
+const FolderCard: React.FC<FolderCardProps> = ({ folder, onClick }) => {
+  return (
+    <div className="corpus-folder-card" onClick={onClick}>
+      <div className="corpus-folder-card__icon">
+        <FolderIcon />
+      </div>
+      <div className="corpus-folder-card__content">
+        <h3 className="corpus-folder-card__name">{folder.name}</h3>
+        <span className="corpus-folder-card__meta">
+          {folder.itemCount || 0} item{folder.itemCount !== 1 ? 's' : ''}
+        </span>
+      </div>
+      <span className="corpus-folder-card__arrow">
+        <ChevronRightIcon />
+      </span>
+    </div>
+  );
+};
+
+// Folder tree item component
+interface FolderTreeItemProps {
+  folder: FolderItem;
+  level: number;
+  isActive: boolean;
+  isExpanded: boolean;
+  onSelect: () => void;
+  onToggle: () => void;
+  children?: React.ReactNode;
+}
+
+const FolderTreeItem: React.FC<FolderTreeItemProps> = ({
+  folder,
+  level,
+  isActive,
+  isExpanded,
+  onSelect,
+  onToggle,
+  children,
+}) => {
+  const hasChildren = folder.children && folder.children.some(c => c.type === 'folder');
+  const levelClass = level === 1 ? 'folder-tree-item--nested' : level >= 2 ? 'folder-tree-item--nested-2' : '';
+
+  return (
+    <>
+      <button
+        className={`folder-tree-item ${isActive ? 'folder-tree-item--active' : ''} ${levelClass}`}
+        onClick={onSelect}
+      >
+        <span className="folder-tree-item__icon">
+          {isExpanded ? <FolderOpenIcon /> : <FolderIcon />}
+        </span>
+        {folder.name}
+        {hasChildren && (
+          <span
+            className={`folder-tree-item__expand ${isExpanded ? 'folder-tree-item__expand--open' : ''}`}
+            onClick={(e) => { e.stopPropagation(); onToggle(); }}
+          >
+            <ChevronRightIcon />
+          </span>
+        )}
+      </button>
+      {isExpanded && children}
+    </>
+  );
+};
+
+export const Reimagined: StoryObj = {
+  name: 'Corpus Detail (Reimagined)',
+  render: () => {
+    const [activeNav, setActiveNav] = useState('corpuses');
+    const [activeSection, setActiveSection] = useState('home');
+    const [searchValue, setSearchValue] = useState('');
+    const [activeFilter, setActiveFilter] = useState('documents');
+    const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+    const [actionMenuOpen, setActionMenuOpen] = useState(false);
+    const [currentPath, setCurrentPath] = useState<string[]>(['Contracts', 'Active']);
+    const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set(['Contracts']));
+    const [chatValue, setChatValue] = useState('');
+
+    // Section navigation items
+    const sectionNavItems = [
+      { id: 'home', icon: <HomeIcon />, label: 'Home' },
+      { id: 'documents', icon: <DocumentIcon />, label: 'Documents', badge: 7 },
+      { id: 'annotations', icon: <AnnotationIcon />, label: 'Annotations', badge: 2 },
+      { id: 'extracts', icon: <ExtractIcon />, label: 'Extracts', badge: 12 },
+      { id: 'analyses', icon: <AnalysisIcon />, label: 'Analyses', badge: 3 },
+      { id: 'discussions', icon: <DiscussionIcon />, label: 'Discussions', badge: 3 },
+      { id: 'chats', icon: <ChatIcon />, label: 'Chats', badge: 5 },
+      { id: 'badges', icon: <BadgeIcon />, label: 'Badges' },
+      { id: 'settings', icon: <SettingsIcon />, label: 'Settings' },
+    ];
+
+    const filterItems = [
+      { id: 'documents', label: 'Documents', count: 7 },
+      { id: 'annotations', label: 'Annotations', count: 2 },
+      { id: 'discussions', label: 'Discussions', count: 1 },
+    ];
+
+    const handleSelect = (id: string) => {
+      setSelectedIds(prev => {
+        const next = new Set(prev);
+        if (next.has(id)) {
+          next.delete(id);
+        } else {
+          next.add(id);
+        }
+        return next;
+      });
+    };
+
+    const navigateToFolder = (path: string[]) => {
+      setCurrentPath(path);
+      setSelectedIds(new Set());
+    };
+
+    const toggleFolder = (folderId: string) => {
+      setExpandedFolders(prev => {
+        const next = new Set(prev);
+        if (next.has(folderId)) {
+          next.delete(folderId);
+        } else {
+          next.add(folderId);
+        }
+        return next;
+      });
+    };
+
+    // Helper for FSItem navigation
+    const getFSItemsAtPath = (path: string[], items: FSItem[]): FSItem[] => {
+      if (path.length === 0) return items;
+      let current = items;
+      for (const segment of path) {
+        const folder = current.find(item => item.type === 'folder' && item.name === segment) as FolderItem | undefined;
+        if (folder?.children) {
+          current = folder.children;
+        } else {
+          return [];
+        }
+      }
+      return current;
+    };
+
+    // Get current folder contents
+    const currentItems = getFSItemsAtPath(currentPath, corpusFileSystem);
+    const folders = currentItems.filter((item): item is FolderItem => item.type === 'folder');
+    const documents = currentItems.filter((item): item is DocItem => item.type === 'document');
+
+    // Render folder tree recursively
+    const renderFolderTree = (items: FSItem[], level: number = 0, parentPath: string[] = []): React.ReactNode => {
+      return items
+        .filter((item): item is FolderItem => item.type === 'folder')
+        .map(folder => {
+          const folderPath = [...parentPath, folder.name];
+          const isActive = JSON.stringify(currentPath) === JSON.stringify(folderPath);
+          const isExpanded = expandedFolders.has(folder.id);
+
+          return (
+            <FolderTreeItem
+              key={folder.id}
+              folder={folder}
+              level={level}
+              isActive={isActive}
+              isExpanded={isExpanded}
+              onSelect={() => navigateToFolder(folderPath)}
+              onToggle={() => toggleFolder(folder.id)}
+            >
+              {folder.children && renderFolderTree(folder.children, level + 1, folderPath)}
+            </FolderTreeItem>
+          );
+        });
+    };
+
+    return (
+      <>
+        <style>{reimaginedPageStyles}</style>
+        <div className="corpus-detail-page">
+          <NavBar
+            brandName="Open Contracts"
+            version="v3.0.0b3"
+            items={navItems}
+            activeId={activeNav}
+            onNavigate={setActiveNav}
+            userName="John Scrudato"
+            userMenuItems={userMenuItems}
+          />
+
+          <div className="corpus-detail-layout">
+            {/* Refined sidebar with corpus metadata */}
+            <aside className="corpus-detail-sidebar">
+              <div className="corpus-detail-sidebar__header">
+                <div className="corpus-detail-sidebar__avatar">MC</div>
+                <h2 className="corpus-detail-sidebar__name">My First Corpus</h2>
+                <div className="corpus-detail-sidebar__meta">
+                  <span className="corpus-detail-sidebar__visibility">
+                    <LockIcon />
+                    Private
+                  </span>
+                  <span>Created Dec 2024</span>
+                </div>
+                <p className="corpus-detail-sidebar__description">
+                  A collection of client contracts and legal templates for the Q4 2024 review process.
+                </p>
+              </div>
+
+              {/* Section navigation */}
+              <nav className="corpus-section-nav">
+                <div className="corpus-section-nav__group">
+                  <div className="corpus-section-nav__label">Overview</div>
+                  {sectionNavItems.slice(0, 1).map(item => (
+                    <button
+                      key={item.id}
+                      className={`corpus-section-nav__item ${activeSection === item.id ? 'corpus-section-nav__item--active' : ''}`}
+                      onClick={() => setActiveSection(item.id)}
+                    >
+                      <span className="corpus-section-nav__icon">{item.icon}</span>
+                      {item.label}
+                      {item.badge && <span className="corpus-section-nav__badge">{item.badge}</span>}
+                    </button>
+                  ))}
+                </div>
+
+                <div className="corpus-section-nav__group">
+                  <div className="corpus-section-nav__label">Content</div>
+                  {sectionNavItems.slice(1, 7).map(item => (
+                    <button
+                      key={item.id}
+                      className={`corpus-section-nav__item ${activeSection === item.id ? 'corpus-section-nav__item--active' : ''}`}
+                      onClick={() => setActiveSection(item.id)}
+                    >
+                      <span className="corpus-section-nav__icon">{item.icon}</span>
+                      {item.label}
+                      {item.badge && <span className="corpus-section-nav__badge">{item.badge}</span>}
+                    </button>
+                  ))}
+                </div>
+
+                <div className="corpus-section-nav__group">
+                  <div className="corpus-section-nav__label">Configure</div>
+                  {sectionNavItems.slice(7).map(item => (
+                    <button
+                      key={item.id}
+                      className={`corpus-section-nav__item ${activeSection === item.id ? 'corpus-section-nav__item--active' : ''}`}
+                      onClick={() => setActiveSection(item.id)}
+                    >
+                      <span className="corpus-section-nav__icon">{item.icon}</span>
+                      {item.label}
+                      {item.badge && <span className="corpus-section-nav__badge">{item.badge}</span>}
+                    </button>
+                  ))}
+                </div>
+              </nav>
+
+              <div className="corpus-detail-sidebar__footer">
+                <Button variant="primary" size="sm" fullWidth leftIcon={<PlusIcon />}>
+                  Upload Document
+                </Button>
+              </div>
+            </aside>
+
+            {/* Main content */}
+            <main className="corpus-detail-main">
+              <div className="corpus-detail-content">
+                {/* HOME SECTION */}
+                {activeSection === 'home' && (
+                  <>
+                    {/* Hero section with chat */}
+                    <section className="corpus-detail-hero">
+                      <div className="corpus-detail-hero__breadcrumb">
+                        <a href="#">Corpuses</a>
+                        <span className="corpus-detail-hero__breadcrumb-sep">/</span>
+                        <span>My First Corpus</span>
+                      </div>
+                      <h1 className="corpus-detail-hero__title">
+                        My First <span>Corpus</span>
+                      </h1>
+                      <p className="corpus-detail-hero__subtitle">
+                        A collection of client contracts and legal templates for the Q4 2024 review process.
+                        Collaborate with your team on contract analysis and review.
+                      </p>
+
+                      {/* Chat bar - featured prominently */}
+                      <div className="corpus-chat-bar">
+                        <div className="corpus-chat-bar__container">
+                          <input
+                            type="text"
+                            className="corpus-chat-bar__input"
+                            placeholder="Ask about this corpus..."
+                            value={chatValue}
+                            onChange={(e) => setChatValue(e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter' && chatValue.trim()) {
+                                console.log('Chat:', chatValue);
+                                setChatValue('');
+                              }
+                            }}
+                          />
+                          <div className="corpus-chat-bar__actions">
+                            <button
+                              className="corpus-chat-bar__btn corpus-chat-bar__btn--history"
+                              title="Chat history"
+                              onClick={() => setActiveSection('chats')}
+                            >
+                              <HistoryIcon />
+                            </button>
+                            <button
+                              className="corpus-chat-bar__btn corpus-chat-bar__btn--send"
+                              title="Send message"
+                              disabled={!chatValue.trim()}
+                              onClick={() => {
+                                if (chatValue.trim()) {
+                                  console.log('Chat:', chatValue);
+                                  setChatValue('');
+                                }
+                              }}
+                            >
+                              <svg width="18" height="18" viewBox="0 0 18 18" fill="currentColor">
+                                <path d="M9.804 2.298a.9.9 0 00-1.608 0l-6.3 12.6a.9.9 0 001.052 1.268l4.5-1.286A.9.9 0 008.1 14.014V10.5a.9.9 0 011.8 0v3.514a.9.9 0 00.652.866l4.5 1.285a.9.9 0 001.053-1.267l-6.3-12.6z" />
+                              </svg>
+                            </button>
+                          </div>
+                        </div>
+                        <p className="corpus-chat-bar__hint">
+                          Ask questions about documents, get summaries, or explore your corpus with AI
+                        </p>
+                      </div>
+                    </section>
+
+                    {/* Expanded markdown content block */}
+                    <div className="corpus-home-content corpus-home-content--expanded">
+                      <h2>About this Corpus</h2>
+                      <p>
+                        This corpus contains client contracts and legal templates used during our Q4 2024 review process.
+                        All documents have been reviewed and annotated by the legal team.
+                      </p>
+
+                      <h3>Key Objectives</h3>
+                      <ul>
+                        <li>Review and standardize contract language across all client agreements</li>
+                        <li>Identify clauses that need updating for 2025 compliance requirements</li>
+                        <li>Extract key terms and obligations using our AI-powered analysis tools</li>
+                        <li>Train junior associates on contract review best practices</li>
+                      </ul>
+
+                      <h3>Document Summary</h3>
+                      <p>
+                        The corpus consists of <strong>7 documents</strong> totaling <strong>67 pages</strong> of content.
+                        Our team has applied <strong>2 annotation sets</strong> to identify key clauses, obligations,
+                        and potential risks across the document collection.
+                      </p>
+
+                      <h3>Getting Started</h3>
+                      <p>
+                        Use the <code>Documents</code> section to browse and organize files by folder structure.
+                        Explore <code>Annotations</code> to see labeled clauses and entities, or check
+                        <code>Extracts</code> to view structured data pulled from your contracts.
+                      </p>
+                      <p>
+                        Have questions? Use the chat bar above to ask about any document in this corpus.
+                        The AI assistant can summarize content, compare clauses, and help you find specific information.
+                      </p>
+                    </div>
+                  </>
+                )}
+
+                {/* DOCUMENTS SECTION */}
+                {activeSection === 'documents' && (
+                  <section>
+                    <div className="corpus-detail-section-header">
+                      <h2 className="corpus-detail-section-title">Documents</h2>
+                      <HStack gap="sm">
+                        <Button variant="ghost" size="sm" leftIcon={<NewFolderIcon2 />}>
+                          New Folder
+                        </Button>
+                        {selectedIds.size > 0 ? (
+                          <Popover
+                            open={actionMenuOpen}
+                            onOpenChange={setActionMenuOpen}
+                            placement="bottom"
+                            content={
+                              <CorpusActionDropdown
+                                selectedCount={selectedIds.size}
+                                onClose={() => setActionMenuOpen(false)}
+                              />
+                            }
+                          >
+                            <Button variant="primary" size="sm" rightIcon={<ChevronDownIcon2 />}>
+                              {selectedIds.size} Selected
+                            </Button>
+                          </Popover>
+                        ) : (
+                          <Button variant="primary" size="sm" leftIcon={<PlusIcon />}>
+                            Upload
+                          </Button>
+                        )}
+                      </HStack>
+                    </div>
+
+                    <div className="corpus-fs-layout">
+                      {/* Folder tree sidebar */}
+                      <div className="corpus-fs-sidebar">
+                        <div className="corpus-fs-sidebar__header">Folders</div>
+                        <div className="corpus-fs-sidebar__tree">
+                          {/* Root item */}
+                          <button
+                            className={`folder-tree-item ${currentPath.length === 0 ? 'folder-tree-item--active' : ''}`}
+                            onClick={() => navigateToFolder([])}
+                          >
+                            <span className="folder-tree-item__icon"><HomeIcon2 /></span>
+                            All Documents
+                          </button>
+                          {renderFolderTree(corpusFileSystem)}
+                        </div>
+                      </div>
+
+                      {/* File list main area */}
+                      <div className="corpus-fs-main">
+                        {/* Toolbar with breadcrumb */}
+                        <div className="corpus-fs-toolbar">
+                          <div className="corpus-fs-breadcrumb">
+                            <button
+                              className="corpus-fs-breadcrumb__item"
+                              onClick={() => navigateToFolder([])}
+                            >
+                              <HomeIcon2 />
+                            </button>
+                            {currentPath.map((segment, index) => (
+                              <React.Fragment key={index}>
+                                <span className="corpus-fs-breadcrumb__sep">/</span>
+                                <button
+                                  className={`corpus-fs-breadcrumb__item ${index === currentPath.length - 1 ? 'corpus-fs-breadcrumb__item--current' : ''}`}
+                                  onClick={() => navigateToFolder(currentPath.slice(0, index + 1))}
+                                >
+                                  {segment}
+                                </button>
+                              </React.Fragment>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Content area */}
+                        <div className="corpus-fs-content">
+                          {/* Folders */}
+                          {folders.length > 0 && (
+                            <>
+                              <div className="corpus-fs-section-label">Folders</div>
+                              <div className="corpus-fs-grid corpus-fs-grid--folders">
+                                {folders.map(folder => (
+                                  <FolderCard
+                                    key={folder.id}
+                                    folder={folder}
+                                    onClick={() => navigateToFolder([...currentPath, folder.name])}
+                                  />
+                                ))}
+                              </div>
+                            </>
+                          )}
+
+                          {/* Documents */}
+                          {documents.length > 0 && (
+                            <>
+                              <div className="corpus-fs-section-label">Documents</div>
+                              <div className="corpus-fs-grid">
+                                {documents.map(doc => (
+                                  <CorpusDocCard
+                                    key={doc.id}
+                                    doc={{
+                                      id: doc.id,
+                                      name: doc.name,
+                                      type: doc.docType,
+                                      size: doc.size,
+                                      pages: doc.pages,
+                                      uploadedBy: doc.uploadedBy,
+                                      uploadedAt: doc.uploadedAt,
+                                      thumbnail: doc.thumbnail,
+                                    }}
+                                    selected={selectedIds.has(doc.id)}
+                                    onSelect={handleSelect}
+                                  />
+                                ))}
+                              </div>
+                            </>
+                          )}
+
+                          {/* Empty state */}
+                          {folders.length === 0 && documents.length === 0 && (
+                            <EmptyState
+                              icon={<FolderOpenIcon />}
+                              title="This folder is empty"
+                              description="Upload documents or create subfolders to organize your corpus."
+                              action={
+                                <Button variant="primary" leftIcon={<PlusIcon />}>
+                                  Upload Document
+                                </Button>
+                              }
+                            />
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </section>
+                )}
+
+                {/* ANNOTATIONS SECTION */}
+                {activeSection === 'annotations' && (
+                  <section>
+                    <div className="corpus-detail-section-header">
+                      <h2 className="corpus-detail-section-title">Annotations</h2>
+                      <Button variant="primary" size="sm" leftIcon={<PlusIcon />}>
+                        New Annotation
+                      </Button>
+                    </div>
+                    <div className="corpus-section-placeholder">
+                      <div className="corpus-section-placeholder__icon">
+                        <AnnotationIcon />
+                      </div>
+                      <h3 className="corpus-section-placeholder__title">Annotations Browser</h3>
+                      <p className="corpus-section-placeholder__description">
+                        View and manage annotations applied to documents in this corpus.
+                        Filter by label type, document, or annotator.
+                      </p>
+                      <Button variant="primary" leftIcon={<PlusIcon />}>
+                        Create Annotation
+                      </Button>
+                    </div>
+                  </section>
+                )}
+
+                {/* EXTRACTS SECTION */}
+                {activeSection === 'extracts' && (
+                  <section>
+                    <div className="corpus-detail-section-header">
+                      <h2 className="corpus-detail-section-title">Extracts</h2>
+                      <Button variant="primary" size="sm" leftIcon={<PlusIcon />}>
+                        New Extract
+                      </Button>
+                    </div>
+                    <div className="corpus-section-placeholder">
+                      <div className="corpus-section-placeholder__icon">
+                        <ExtractIcon />
+                      </div>
+                      <h3 className="corpus-section-placeholder__title">Data Extracts</h3>
+                      <p className="corpus-section-placeholder__description">
+                        View extracted data from documents including key terms, dates, parties,
+                        and custom fields defined by your extraction schemas.
+                      </p>
+                      <Button variant="primary" leftIcon={<PlusIcon />}>
+                        Run Extraction
+                      </Button>
+                    </div>
+                  </section>
+                )}
+
+                {/* ANALYSES SECTION */}
+                {activeSection === 'analyses' && (
+                  <section>
+                    <div className="corpus-detail-section-header">
+                      <h2 className="corpus-detail-section-title">Analyses</h2>
+                      <Button variant="primary" size="sm" leftIcon={<PlusIcon />}>
+                        New Analysis
+                      </Button>
+                    </div>
+                    <div className="corpus-section-placeholder">
+                      <div className="corpus-section-placeholder__icon">
+                        <AnalysisIcon />
+                      </div>
+                      <h3 className="corpus-section-placeholder__title">AI-Powered Analyses</h3>
+                      <p className="corpus-section-placeholder__description">
+                        Run AI analyses across your corpus to identify patterns, risks,
+                        and insights. Configure custom prompts and review results.
+                      </p>
+                      <Button variant="primary" leftIcon={<PlusIcon />}>
+                        Start Analysis
+                      </Button>
+                    </div>
+                  </section>
+                )}
+
+                {/* DISCUSSIONS SECTION */}
+                {activeSection === 'discussions' && (
+                  <section>
+                    <div className="corpus-detail-section-header">
+                      <h2 className="corpus-detail-section-title">Discussions</h2>
+                      <Button variant="primary" size="sm" leftIcon={<PlusIcon />}>
+                        New Discussion
+                      </Button>
+                    </div>
+                    <div className="corpus-section-placeholder">
+                      <div className="corpus-section-placeholder__icon">
+                        <DiscussionIcon />
+                      </div>
+                      <h3 className="corpus-section-placeholder__title">Team Discussions</h3>
+                      <p className="corpus-section-placeholder__description">
+                        Start conversations about documents, share insights with your team,
+                        and collaborate on contract review and analysis.
+                      </p>
+                      <Button variant="primary" leftIcon={<PlusIcon />}>
+                        Start Discussion
+                      </Button>
+                    </div>
+                  </section>
+                )}
+
+                {/* CHATS SECTION */}
+                {activeSection === 'chats' && (
+                  <section>
+                    <div className="corpus-detail-section-header">
+                      <h2 className="corpus-detail-section-title">AI Chats</h2>
+                      <Button variant="primary" size="sm" leftIcon={<PlusIcon />}>
+                        New Chat
+                      </Button>
+                    </div>
+                    <div className="corpus-section-placeholder">
+                      <div className="corpus-section-placeholder__icon">
+                        <ChatIcon />
+                      </div>
+                      <h3 className="corpus-section-placeholder__title">AI-Powered Chat</h3>
+                      <p className="corpus-section-placeholder__description">
+                        Chat with AI about your corpus documents. Ask questions,
+                        get summaries, and explore your contracts with natural language.
+                      </p>
+                      <Button variant="primary" leftIcon={<PlusIcon />}>
+                        Start New Chat
+                      </Button>
+                    </div>
+                  </section>
+                )}
+
+                {/* BADGES SECTION */}
+                {activeSection === 'badges' && (
+                  <section>
+                    <div className="corpus-detail-section-header">
+                      <h2 className="corpus-detail-section-title">Badges</h2>
+                      <Button variant="primary" size="sm" leftIcon={<PlusIcon />}>
+                        New Badge
+                      </Button>
+                    </div>
+                    <div className="corpus-section-placeholder">
+                      <div className="corpus-section-placeholder__icon">
+                        <BadgeIcon />
+                      </div>
+                      <h3 className="corpus-section-placeholder__title">Document Badges</h3>
+                      <p className="corpus-section-placeholder__description">
+                        Manage badges and labels that can be applied to documents
+                        for quick categorization and filtering.
+                      </p>
+                      <Button variant="primary" leftIcon={<PlusIcon />}>
+                        Create Badge
+                      </Button>
+                    </div>
+                  </section>
+                )}
+
+                {/* SETTINGS SECTION */}
+                {activeSection === 'settings' && (
+                  <section>
+                    <div className="corpus-detail-section-header">
+                      <h2 className="corpus-detail-section-title">Settings</h2>
+                    </div>
+                    <div className="corpus-section-placeholder">
+                      <div className="corpus-section-placeholder__icon">
+                        <SettingsIcon />
+                      </div>
+                      <h3 className="corpus-section-placeholder__title">Corpus Settings</h3>
+                      <p className="corpus-section-placeholder__description">
+                        Configure corpus permissions, sharing settings, metadata,
+                        and integration options.
+                      </p>
+                      <Button variant="secondary">
+                        Edit Settings
+                      </Button>
+                    </div>
+                  </section>
+                )}
+              </div>
+            </main>
+          </div>
+        </div>
+      </>
+    );
+  },
+};
 
 export const DocumentsWithFileSystem: StoryObj = {
   name: 'Documents (File System View)',
