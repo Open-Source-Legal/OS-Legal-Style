@@ -7,15 +7,24 @@ export const popoverStyles = `
 /* Popover */
 .oc-popover {
   position: absolute;
-  z-index: var(--oc-z-popover);
+  z-index: var(--oc-z-popover, 1000);
   min-width: 200px;
   padding: var(--oc-spacing-md);
-  background: var(--oc-bg-canvas);
-  border: 1px solid var(--oc-border-default);
-  border-radius: var(--oc-radius-lg);
-  box-shadow: var(--oc-shadow-lg);
+  background: var(--oc-bg-canvas, #FFFFFF);
+  border: 1px solid var(--oc-border-default, #E2E8F0);
+  border-radius: var(--oc-radius-lg, 12px);
+  box-shadow: var(--oc-shadow-lg, 0 4px 12px rgba(0, 0, 0, 0.1));
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  animation: oc-fade-in var(--oc-duration-fast) var(--oc-easing-enter);
+  animation: oc-popover-fade-in 0.15s ease-out;
+}
+
+@keyframes oc-popover-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 /* Placement */

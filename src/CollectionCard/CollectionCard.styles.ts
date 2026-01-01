@@ -146,10 +146,10 @@ export const collectionCardStyles = `
   min-width: 32px;
   min-height: 32px;
   padding: 0;
-  background: #E0F2FE; /* DEBUG: light blue so we can see it */
-  border: 2px solid #0284C7; /* DEBUG: blue border */
+  background: transparent;
+  border: 1px solid transparent;
   border-radius: var(--oc-radius-sm, 6px);
-  color: var(--oc-fg-secondary, #64748B);
+  color: var(--oc-fg-tertiary, #94A3B8);
   cursor: pointer;
   transition: background-color var(--oc-duration-fast, 0.15s) var(--oc-easing-default),
               color var(--oc-duration-fast, 0.15s) var(--oc-easing-default),
@@ -157,9 +157,9 @@ export const collectionCardStyles = `
 }
 
 .oc-collection-card__menu-button:hover {
-  background: #E2E8F0;
-  border-color: #94A3B8;
-  color: var(--oc-fg-primary, #1E293B);
+  background: var(--oc-bg-surface-hover, #F1F5F9);
+  border-color: var(--oc-border-default, #E2E8F0);
+  color: var(--oc-fg-secondary, #64748B);
 }
 
 .oc-collection-card__menu-button:focus-visible {

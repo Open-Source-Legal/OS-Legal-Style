@@ -35,6 +35,40 @@ const FolderIcon = () => (
   </svg>
 );
 
+const EditIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+    <path d="M11.013 1.427a1.75 1.75 0 012.474 0l1.086 1.086a1.75 1.75 0 010 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 01-.927-.928l.929-3.25a1.75 1.75 0 01.445-.758l8.61-8.61zm1.414 1.06a.25.25 0 00-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 000-.354l-1.086-1.086zM11.189 6.25L9.75 4.81l-6.286 6.287a.25.25 0 00-.064.108l-.558 1.953 1.953-.558a.249.249 0 00.108-.064l6.286-6.286z" />
+  </svg>
+);
+
+const ShareIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+    <path d="M12.5 3a1.5 1.5 0 110 3 1.5 1.5 0 010-3zm0-1a2.5 2.5 0 00-2.45 3.01L5.95 7.53a2.5 2.5 0 100 2.94l4.1 2.52a2.5 2.5 0 101.06-1.64l-4.1-2.52a2.5 2.5 0 000-.66l4.1-2.52A2.5 2.5 0 1012.5 2zM3.5 9a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm9 5a1.5 1.5 0 110-3 1.5 1.5 0 010 3z" />
+  </svg>
+);
+
+const DuplicateIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+    <path d="M10.5 3a.5.5 0 01.5.5V5h1.5a.5.5 0 010 1H11v1.5a.5.5 0 01-1 0V6H8.5a.5.5 0 010-1H10V3.5a.5.5 0 01.5-.5z" />
+    <path d="M4 2a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2V4a2 2 0 00-2-2H4zm0 1h8a1 1 0 011 1v8a1 1 0 01-1 1H4a1 1 0 01-1-1V4a1 1 0 011-1z" />
+  </svg>
+);
+
+const TrashIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+    <path d="M5.5 5.5A.5.5 0 016 6v6a.5.5 0 01-1 0V6a.5.5 0 01.5-.5zm2.5 0a.5.5 0 01.5.5v6a.5.5 0 01-1 0V6a.5.5 0 01.5-.5zm3 .5a.5.5 0 00-1 0v6a.5.5 0 001 0V6z" />
+    <path fillRule="evenodd" d="M14.5 3a1 1 0 01-1 1H13v9a2 2 0 01-2 2H5a2 2 0 01-2-2V4h-.5a1 1 0 01-1-1V2a1 1 0 011-1H6a1 1 0 011-1h2a1 1 0 011 1h3.5a1 1 0 011 1v1zM4.118 4L4 4.059V13a1 1 0 001 1h6a1 1 0 001-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z" />
+  </svg>
+);
+
+const KebabIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 16 16">
+    <circle cx="8" cy="3" r="1.5" fill="currentColor" />
+    <circle cx="8" cy="8" r="1.5" fill="currentColor" />
+    <circle cx="8" cy="13" r="1.5" fill="currentColor" />
+  </svg>
+);
+
 // ═══════════════════════════════════════════════════════════════
 // NAV DATA
 // ═══════════════════════════════════════════════════════════════
@@ -174,6 +208,57 @@ const sampleCorpuses: Corpus[] = [
 // ═══════════════════════════════════════════════════════════════
 // PAGE STYLES - Minimal, matching Discover page aesthetic
 // ═══════════════════════════════════════════════════════════════
+
+// Context menu styles
+const contextMenuStyles = `
+  .corpus-context-menu {
+    min-width: 160px;
+    padding: 6px 0;
+    background: white;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .corpus-context-menu__item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 10px 14px;
+    background: transparent;
+    border: none;
+    font-size: 14px;
+    color: #334155;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .corpus-context-menu__item:hover {
+    background: #F1F5F9;
+  }
+
+  .corpus-context-menu__item--danger {
+    color: #DC2626;
+  }
+
+  .corpus-context-menu__item--danger:hover {
+    background: #FEF2F2;
+  }
+
+  .corpus-context-menu__divider {
+    height: 1px;
+    background: #E2E8F0;
+    margin: 6px 0;
+  }
+
+  .corpus-context-menu__icon {
+    width: 16px;
+    height: 16px;
+    opacity: 0.7;
+  }
+`;
 
 const pageStyles = `
   .corpus-list-page {
@@ -427,9 +512,35 @@ export const Default: StoryObj = {
     const totalDocs = sampleCorpuses.reduce((sum, c) => sum + c.documentCount, 0);
     const totalAnnotations = sampleCorpuses.reduce((sum, c) => sum + c.annotationCount, 0);
 
+    // Track which menu is open
+    const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+
+    // Context menu component
+    const CorpusContextMenu = ({ corpus, onClose }: { corpus: Corpus; onClose: () => void }) => (
+      <div className="corpus-context-menu">
+        <button className="corpus-context-menu__item" onClick={() => { console.log('Edit:', corpus.id); onClose(); }}>
+          <EditIcon />
+          Edit
+        </button>
+        <button className="corpus-context-menu__item" onClick={() => { console.log('Share:', corpus.id); onClose(); }}>
+          <ShareIcon />
+          Share
+        </button>
+        <button className="corpus-context-menu__item" onClick={() => { console.log('Duplicate:', corpus.id); onClose(); }}>
+          <DuplicateIcon />
+          Duplicate
+        </button>
+        <div className="corpus-context-menu__divider" />
+        <button className="corpus-context-menu__item corpus-context-menu__item--danger" onClick={() => { console.log('Delete:', corpus.id); onClose(); }}>
+          <TrashIcon />
+          Delete
+        </button>
+      </div>
+    );
+
     return (
       <>
-        <style>{pageStyles}</style>
+        <style>{pageStyles}{contextMenuStyles}</style>
         <div className="corpus-list-page">
           <NavBar
             brandName="Open Contracts"
@@ -557,7 +668,27 @@ export const Default: StoryObj = {
                     stats={formatStats(corpus)}
                     image={corpus.image}
                     onClick={() => console.log('Open corpus:', corpus.id)}
-                    onMenuClick={(e) => console.log('Menu clicked:', corpus.id, e)}
+                    menu={
+                      <Popover
+                        open={openMenuId === corpus.id}
+                        onOpenChange={(open) => setOpenMenuId(open ? corpus.id : null)}
+                        placement="bottom"
+                        content={
+                          <CorpusContextMenu
+                            corpus={corpus}
+                            onClose={() => setOpenMenuId(null)}
+                          />
+                        }
+                      >
+                        <button
+                          type="button"
+                          className="oc-collection-card__menu-button"
+                          aria-label="Open menu"
+                        >
+                          <KebabIcon />
+                        </button>
+                      </Popover>
+                    }
                   />
                 ))}
               </CollectionList>

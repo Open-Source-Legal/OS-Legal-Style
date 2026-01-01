@@ -100,6 +100,13 @@ export const Popover = forwardRef<HTMLDivElement, PopoverProps>(
       }
     };
 
+    // Calculate position when open becomes true (handles controlled mode)
+    useEffect(() => {
+      if (open && !position) {
+        updatePosition();
+      }
+    }, [open, position, updatePosition]);
+
     useEffect(() => {
       const handleClickOutside = (e: MouseEvent) => {
         if (
