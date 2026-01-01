@@ -1,14 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { NavBar } from '../NavBar';
-import { PageHeader } from '../PageHeader';
-import { SearchInput } from '../SearchInput';
+import { SearchBox } from '../SearchBox';
 import { Chip } from '../Chip';
 import { Button, IconButton } from '../Button';
 import { HStack } from '../Stack';
 import { Avatar } from '../Avatar';
 import { EmptyState } from '../EmptyState';
 import { FilterTabs } from '../FilterTabs';
+import { StatBlock, StatGrid } from '../StatBlock';
 import { Spinner } from '../Progress';
 import { Checkbox } from '../Checkbox';
 import { Popover } from '../Popover';
@@ -131,6 +131,26 @@ const CheckboxIcon = () => (
   </svg>
 );
 
+const MoveIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+    <path d="M2 1a1 1 0 00-1 1v11a1 1 0 001 1h5.5a.5.5 0 000-1H2V2h5v4H3.5a.5.5 0 000 1H8a1 1 0 001-1V1.5a.5.5 0 00-.5-.5H2z" />
+    <path d="M11 9.5a.5.5 0 01.5-.5h4a.5.5 0 010 1h-4a.5.5 0 01-.5-.5z" />
+    <path d="M13.354 6.854a.5.5 0 00-.708-.708l-3 3a.5.5 0 000 .708l3 3a.5.5 0 00.708-.708L11.207 10H15.5a.5.5 0 000-1h-4.293l2.147-2.146z" />
+  </svg>
+);
+
+const ChevronDownIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+    <path d="M4.22 6.22a.75.75 0 011.06 0L8 8.94l2.72-2.72a.75.75 0 111.06 1.06l-3.25 3.25a.75.75 0 01-1.06 0L4.22 7.28a.75.75 0 010-1.06z" />
+  </svg>
+);
+
+const AddToCorpusIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+    <path d="M.54 3.87L.5 3a2 2 0 012-2h3.672a2 2 0 011.414.586l.828.828A2 2 0 009.828 3H12.5a2 2 0 012 2v1H.5v-.13a.5.5 0 01.04-.13zM1.059 5H14.94l-.863 8.13A2 2 0 0112.095 15H3.905a2 2 0 01-1.983-1.87L1.059 5z" />
+  </svg>
+);
+
 const DocumentEmptyIcon = () => (
   <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
     <path d="M12 6a4 4 0 00-4 4v28a4 4 0 004 4h24a4 4 0 004-4V18l-12-12H12z" fill="currentColor" opacity="0.1" />
@@ -190,6 +210,7 @@ const sampleDocuments: Document[] = [
     uploadedAt: '2 hours ago',
     status: 'processed',
     corpus: 'SEC Filings Q4 2019',
+    thumbnail: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=300&h=400&fit=crop',
   },
   {
     id: '2',
@@ -201,6 +222,7 @@ const sampleDocuments: Document[] = [
     uploadedAt: '2 hours ago',
     status: 'processed',
     corpus: 'SEC Filings Q4 2019',
+    thumbnail: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=300&h=400&fit=crop',
   },
   {
     id: '3',
@@ -212,6 +234,7 @@ const sampleDocuments: Document[] = [
     uploadedAt: '2 hours ago',
     status: 'processing',
     corpus: 'SEC Filings Q4 2019',
+    thumbnail: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=300&h=400&fit=crop',
   },
   {
     id: '4',
@@ -223,6 +246,7 @@ const sampleDocuments: Document[] = [
     uploadedAt: '3 hours ago',
     status: 'processed',
     corpus: 'SEC Filings Q4 2019',
+    thumbnail: 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=300&h=400&fit=crop',
   },
   {
     id: '5',
@@ -234,6 +258,7 @@ const sampleDocuments: Document[] = [
     uploadedAt: '1 day ago',
     status: 'processed',
     corpus: 'Client Contracts',
+    thumbnail: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=300&h=400&fit=crop',
   },
   {
     id: '6',
@@ -245,6 +270,7 @@ const sampleDocuments: Document[] = [
     uploadedAt: '3 days ago',
     status: 'processed',
     corpus: 'Templates',
+    thumbnail: 'https://images.unsplash.com/photo-1568992687947-868a62a9f521?w=300&h=400&fit=crop',
   },
   {
     id: '7',
@@ -256,6 +282,7 @@ const sampleDocuments: Document[] = [
     uploadedAt: '1 week ago',
     status: 'processed',
     corpus: 'HR Documents',
+    thumbnail: 'https://images.unsplash.com/photo-1521791136064-7986c2920216?w=300&h=400&fit=crop',
   },
   {
     id: '8',
@@ -265,6 +292,7 @@ const sampleDocuments: Document[] = [
     uploadedBy: 'Alex Rivera',
     uploadedAt: '2 weeks ago',
     status: 'error',
+    thumbnail: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=300&h=400&fit=crop',
   },
 ];
 
@@ -280,13 +308,39 @@ const pageStyles = `
   }
 
   .documents-page__content {
-    max-width: 1400px;
+    max-width: 900px;
     margin: 0 auto;
-    padding: 32px 24px;
+    padding: 48px 24px 80px;
   }
 
-  .documents-page__header {
-    margin-bottom: 24px;
+  /* Hero section matching Discover/Corpus pages */
+  .documents-page__hero {
+    margin-bottom: 48px;
+  }
+
+  .documents-page__title {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    font-size: 42px;
+    font-weight: 400;
+    line-height: 1.2;
+    color: #1E293B;
+    margin: 0 0 16px;
+  }
+
+  .documents-page__title span {
+    color: #0F766E;
+  }
+
+  .documents-page__subtitle {
+    font-size: 17px;
+    line-height: 1.6;
+    color: #64748B;
+    margin: 0 0 32px;
+    max-width: 600px;
+  }
+
+  .documents-page__search {
+    margin-bottom: 16px;
   }
 
   .documents-page__toolbar {
@@ -297,16 +351,26 @@ const pageStyles = `
     flex-wrap: wrap;
   }
 
-  .documents-page__search {
-    flex: 1;
-    min-width: 200px;
-    max-width: 480px;
-  }
-
   .documents-page__actions {
     display: flex;
     align-items: center;
     gap: 8px;
+  }
+
+  /* Section header styling (like Discover/Corpus pages) */
+  .documents-page__section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+
+  .documents-page__section-title {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    font-size: 24px;
+    font-weight: 400;
+    color: #0F766E;
+    margin: 0;
   }
 
   .documents-page__view-toggle {
@@ -433,8 +497,8 @@ const pageStyles = `
 
   .document-card__preview {
     position: relative;
-    height: 180px;
-    background: var(--oc-bg-canvas, #F8FAFC);
+    height: 160px;
+    background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -445,7 +509,20 @@ const pageStyles = `
     width: 100%;
     height: 100%;
     object-fit: cover;
-    filter: blur(0.5px);
+  }
+
+  /* Thumbnail container for actual document previews */
+  .document-card__thumbnail {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .document-card__thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
   }
 
   .document-card__preview-placeholder {
@@ -821,18 +898,104 @@ const pageStyles = `
     flex-shrink: 0;
   }
 
-  @media (max-width: 900px) {
+  .document-compact-item--selected {
+    background: rgba(15, 118, 110, 0.04);
+  }
+
+  .document-compact-item__actions {
+    display: flex;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.1s;
+    margin-left: auto;
+  }
+
+  .document-compact-item:hover .document-compact-item__actions {
+    opacity: 1;
+  }
+
+  /* Action dropdown menu */
+  .action-dropdown {
+    min-width: 200px;
+    padding: 6px;
+    background: white;
+    border: 1px solid var(--oc-border-default, #E2E8F0);
+    border-radius: var(--oc-radius-lg, 12px);
+    box-shadow: var(--oc-shadow-lg, 0 8px 16px rgba(15, 23, 42, 0.08));
+  }
+
+  .action-dropdown__header {
+    padding: 8px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--oc-fg-tertiary, #94A3B8);
+    border-bottom: 1px solid var(--oc-border-default, #E2E8F0);
+    margin: 0 -6px 6px;
+    padding-left: 18px;
+    padding-right: 18px;
+    background: var(--oc-bg-canvas, #FAFAFA);
+  }
+
+  .action-dropdown__item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 14px;
+    color: var(--oc-fg-primary, #1E293B);
+    background: transparent;
+    border: none;
+    border-radius: var(--oc-radius-md, 8px);
+    cursor: pointer;
+    transition: background 0.1s;
+    text-align: left;
+  }
+
+  .action-dropdown__item:hover {
+    background: var(--oc-bg-surface-hover, #F1F5F9);
+  }
+
+  .action-dropdown__item--primary {
+    color: var(--oc-accent, #0F766E);
+    font-weight: 500;
+  }
+
+  .action-dropdown__item--danger {
+    color: var(--oc-error, #DC2626);
+  }
+
+  .action-dropdown__item--danger:hover {
+    background: #FEF2F2;
+  }
+
+  .action-dropdown__item-icon {
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.7;
+  }
+
+  .action-dropdown__separator {
+    height: 1px;
+    background: var(--oc-border-default, #E2E8F0);
+    margin: 6px 0;
+  }
+
+  @media (max-width: 768px) {
     .documents-page__content {
-      padding: 16px;
+      padding: 32px 16px 60px;
+    }
+
+    .documents-page__title {
+      font-size: 32px;
     }
 
     .documents-page__toolbar {
       flex-direction: column;
       align-items: stretch;
-    }
-
-    .documents-page__search {
-      max-width: none;
     }
 
     .documents-page__actions {
@@ -850,7 +1013,7 @@ const pageStyles = `
     }
 
     .documents-grid {
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
     }
 
     .documents-list__header,
@@ -864,11 +1027,6 @@ const pageStyles = `
     .document-list-item > :nth-child(3),
     .document-list-item > :nth-child(5),
     .document-list-item > :nth-child(6) {
-      display: none;
-    }
-
-    /* Hide FilterTabs on mobile, show only search + filters button */
-    .documents-page__filter-tabs {
       display: none;
     }
   }
@@ -977,12 +1135,16 @@ const ContextMenu: React.FC<ContextMenuProps> = ({ document: doc, position, onCl
       </button>
       <button className="context-menu__item">
         <span className="context-menu__item-icon"><DownloadIcon /></span>
-        Download PDF
+        Download
       </button>
       <div className="context-menu__separator" />
       <button className="context-menu__item">
+        <span className="context-menu__item-icon"><AddToCorpusIcon /></span>
+        Add to Corpus
+      </button>
+      <button className="context-menu__item">
         <span className="context-menu__item-icon"><EditIcon /></span>
-        Edit Document
+        Edit Details
       </button>
       <button className="context-menu__item">
         <span className="context-menu__item-icon"><CheckboxIcon /></span>
@@ -992,6 +1154,51 @@ const ContextMenu: React.FC<ContextMenuProps> = ({ document: doc, position, onCl
       <button className="context-menu__item context-menu__item--danger">
         <span className="context-menu__item-icon"><TrashIcon /></span>
         Delete
+      </button>
+    </div>
+  );
+};
+
+// Action dropdown for bulk operations
+interface ActionDropdownProps {
+  selectedCount: number;
+  onClose: () => void;
+  onDownload?: () => void;
+  onAddToCorpus?: () => void;
+  onDelete?: () => void;
+  onClearSelection?: () => void;
+}
+
+const ActionDropdown: React.FC<ActionDropdownProps> = ({
+  selectedCount,
+  onClose,
+  onDownload,
+  onAddToCorpus,
+  onDelete,
+  onClearSelection,
+}) => {
+  return (
+    <div className="action-dropdown">
+      <div className="action-dropdown__header">
+        {selectedCount} document{selectedCount !== 1 ? 's' : ''} selected
+      </div>
+      <button className="action-dropdown__item action-dropdown__item--primary" onClick={() => { onDownload?.(); onClose(); }}>
+        <span className="action-dropdown__item-icon"><DownloadIcon /></span>
+        Download Selected
+      </button>
+      <button className="action-dropdown__item" onClick={() => { onAddToCorpus?.(); onClose(); }}>
+        <span className="action-dropdown__item-icon"><AddToCorpusIcon /></span>
+        Add to Corpus
+      </button>
+      <div className="action-dropdown__separator" />
+      <button className="action-dropdown__item action-dropdown__item--danger" onClick={() => { onDelete?.(); onClose(); }}>
+        <span className="action-dropdown__item-icon"><TrashIcon /></span>
+        Delete Selected
+      </button>
+      <div className="action-dropdown__separator" />
+      <button className="action-dropdown__item" onClick={() => { onClearSelection?.(); onClose(); }}>
+        <span className="action-dropdown__item-icon"><CheckboxIcon /></span>
+        Clear Selection
       </button>
     </div>
   );
@@ -1029,17 +1236,23 @@ const DocumentCard: React.FC<DocumentCardProps> = ({
       </div>
 
       <div className="document-card__preview">
-        <div className="document-card__preview-placeholder">
-          <div className="document-card__preview-icon">
-            {getDocumentIcon(doc.type)}
+        {doc.thumbnail ? (
+          <div className="document-card__thumbnail">
+            <img src={doc.thumbnail} alt={doc.name} />
           </div>
-          <div className="document-card__preview-lines">
-            <div className="document-card__preview-line" />
-            <div className="document-card__preview-line" />
-            <div className="document-card__preview-line" />
-            <div className="document-card__preview-line" />
+        ) : (
+          <div className="document-card__preview-placeholder">
+            <div className="document-card__preview-icon">
+              {getDocumentIcon(doc.type)}
+            </div>
+            <div className="document-card__preview-lines">
+              <div className="document-card__preview-line" />
+              <div className="document-card__preview-line" />
+              <div className="document-card__preview-line" />
+              <div className="document-card__preview-line" />
+            </div>
           </div>
-        </div>
+        )}
 
         <div className="document-card__type-badge">
           <Chip size="sm" variant="solid" color="default">
@@ -1151,15 +1364,25 @@ interface DocumentCompactItemProps {
   document: Document;
   selected?: boolean;
   onSelect?: (id: string) => void;
+  onContextMenu?: (e: React.MouseEvent, doc: Document) => void;
 }
 
 const DocumentCompactItem: React.FC<DocumentCompactItemProps> = ({
   document: doc,
   selected = false,
   onSelect,
+  onContextMenu,
 }) => {
+  const handleContextMenu = (e: React.MouseEvent) => {
+    e.preventDefault();
+    onContextMenu?.(e, doc);
+  };
+
   return (
-    <div className="document-compact-item">
+    <div
+      className={`document-compact-item ${selected ? 'document-compact-item--selected' : ''}`}
+      onContextMenu={handleContextMenu}
+    >
       <div className="document-compact-item__checkbox" onClick={(e) => e.stopPropagation()}>
         <Checkbox
           checked={selected}
@@ -1172,6 +1395,19 @@ const DocumentCompactItem: React.FC<DocumentCompactItemProps> = ({
       <span className="document-compact-item__name" title={doc.name}>{doc.name}</span>
       <span className="document-compact-item__meta">{doc.size}</span>
       {getStatusChip(doc.status)}
+      <div className="document-compact-item__actions">
+        <IconButton
+          variant="ghost"
+          size="sm"
+          aria-label="More options"
+          onClick={(e) => {
+            e.stopPropagation();
+            onContextMenu?.(e, doc);
+          }}
+        >
+          <MoreIcon />
+        </IconButton>
+      </div>
     </div>
   );
 };
@@ -1239,6 +1475,7 @@ export const Default: StoryObj = {
       uploadDate: { from: '', to: '' },
     });
     const [filterOpen, setFilterOpen] = useState(false);
+    const [actionMenuOpen, setActionMenuOpen] = useState(false);
 
     const filterItems = [
       { id: 'all', label: 'All Documents', count: 8 },
@@ -1296,6 +1533,11 @@ export const Default: StoryObj = {
 
     const activeFilterCount = getActiveFilterCount();
 
+    // Calculate stats
+    const totalPages = sampleDocuments.reduce((sum, d) => sum + (d.pages || 0), 0);
+    const processedCount = sampleDocuments.filter(d => d.status === 'processed').length;
+    const corpusCount = new Set(sampleDocuments.map(d => d.corpus).filter(Boolean)).size;
+
     return (
       <>
         <style>{pageStyles}</style>
@@ -1311,104 +1553,102 @@ export const Default: StoryObj = {
             userMenuItems={userMenuItems}
           />
 
-          <div className="documents-page__content">
-            <div className="documents-page__header">
-              <PageHeader
-                title="Documents"
-                subtitle="Browse and manage all documents in your corpus"
-                actions={
-                  <HStack gap="sm">
+          <main className="documents-page__content">
+            {/* Hero section matching Discover/Corpus pages */}
+            <section className="documents-page__hero">
+              <h1 className="documents-page__title">
+                Your <span>documents</span>
+              </h1>
+              <p className="documents-page__subtitle">
+                Browse, search, and manage all documents across your corpuses.
+                Upload new files or explore your existing library.
+              </p>
+
+              {/* Search */}
+              <div className="documents-page__search">
+                <SearchBox
+                  placeholder="Search for documents..."
+                  value={searchValue}
+                  onChange={(e) => setSearchValue(e.target.value)}
+                  onSubmit={(value) => console.log('Search:', value)}
+                />
+              </div>
+
+              {/* Filter tabs */}
+              <FilterTabs
+                items={filterItems}
+                value={activeFilter}
+                onChange={setActiveFilter}
+              />
+            </section>
+
+            {/* Stats grid */}
+            <section style={{ marginBottom: 48 }}>
+              <StatGrid columns={2}>
+                <StatBlock value={sampleDocuments.length.toString()} label="Documents" sublabel="in your library" />
+                <StatBlock value={totalPages.toLocaleString()} label="Pages" sublabel="total content" />
+                <StatBlock value={processedCount.toString()} label="Processed" sublabel="ready for analysis" />
+                <StatBlock value={corpusCount.toString()} label="Corpuses" sublabel="organized collections" />
+              </StatGrid>
+            </section>
+
+            {/* Documents section */}
+            <section>
+              <div className="documents-page__section-header">
+                <h2 className="documents-page__section-title">
+                  {activeFilter === 'all' ? 'All Documents' : filterItems.find(f => f.id === activeFilter)?.label}
+                </h2>
+                <HStack gap="sm">
+                  <div className="documents-page__view-toggle">
+                    <button
+                      className={`documents-page__view-btn ${viewMode === 'grid' ? 'documents-page__view-btn--active' : ''}`}
+                      onClick={() => setViewMode('grid')}
+                      title="Grid view"
+                    >
+                      <GridIcon />
+                    </button>
+                    <button
+                      className={`documents-page__view-btn ${viewMode === 'list' ? 'documents-page__view-btn--active' : ''}`}
+                      onClick={() => setViewMode('list')}
+                      title="List view"
+                    >
+                      <ListIcon />
+                    </button>
+                    <button
+                      className={`documents-page__view-btn ${viewMode === 'compact' ? 'documents-page__view-btn--active' : ''}`}
+                      onClick={() => setViewMode('compact')}
+                      title="Compact view"
+                    >
+                      <CompactIcon />
+                    </button>
+                  </div>
+                  {selectedIds.size > 0 ? (
                     <Popover
-                      open={filterOpen}
-                      onOpenChange={setFilterOpen}
+                      open={actionMenuOpen}
+                      onOpenChange={setActionMenuOpen}
                       placement="bottom"
                       content={
-                        <FilterPanel
-                          sections={filterSections}
-                          values={filterValues}
-                          onChange={setFilterValues}
-                          onApply={() => setFilterOpen(false)}
-                          onCancel={() => setFilterOpen(false)}
+                        <ActionDropdown
+                          selectedCount={selectedIds.size}
+                          onClose={() => setActionMenuOpen(false)}
+                          onDownload={() => console.log('Download:', [...selectedIds])}
+                          onAddToCorpus={() => console.log('Add to corpus:', [...selectedIds])}
+                          onDelete={() => console.log('Delete:', [...selectedIds])}
+                          onClearSelection={() => setSelectedIds(new Set())}
                         />
                       }
                     >
-                      <Button variant="ghost" size="sm" leftIcon={<FilterIcon />}>
-                        Filters{activeFilterCount > 0 && ` (${activeFilterCount})`}
+                      <Button variant="primary" size="sm" rightIcon={<ChevronDownIcon />}>
+                        {selectedIds.size} Selected
                       </Button>
                     </Popover>
+                  ) : (
                     <Button variant="primary" size="sm" leftIcon={<PlusIcon />}>
                       Upload
                     </Button>
-                  </HStack>
-                }
-              />
-            </div>
-
-            <div className="documents-page__toolbar">
-              <div className="documents-page__filter-tabs">
-                <FilterTabs
-                  items={filterItems}
-                  value={activeFilter}
-                  onChange={setActiveFilter}
-                />
+                  )}
+                </HStack>
               </div>
-
-              <div style={{ flex: 1 }} />
-
-              <div className="documents-page__search">
-                <SearchInput
-                  placeholder="Search for document containing text..."
-                  value={searchValue}
-                  onChange={(e) => setSearchValue(e.target.value)}
-                  fullWidth
-                />
-              </div>
-
-              <div className="documents-page__actions">
-                <div className="documents-page__view-toggle">
-                  <button
-                    className={`documents-page__view-btn ${viewMode === 'grid' ? 'documents-page__view-btn--active' : ''}`}
-                    onClick={() => setViewMode('grid')}
-                    title="Grid view"
-                  >
-                    <GridIcon />
-                  </button>
-                  <button
-                    className={`documents-page__view-btn ${viewMode === 'list' ? 'documents-page__view-btn--active' : ''}`}
-                    onClick={() => setViewMode('list')}
-                    title="List view"
-                  >
-                    <ListIcon />
-                  </button>
-                  <button
-                    className={`documents-page__view-btn ${viewMode === 'compact' ? 'documents-page__view-btn--active' : ''}`}
-                    onClick={() => setViewMode('compact')}
-                    title="Compact view"
-                  >
-                    <CompactIcon />
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {selectedIds.size > 0 && (
-              <div className="documents-page__selection-bar">
-                <span className="documents-page__selection-count">
-                  <Checkbox
-                    checked={selectedIds.size === filteredDocuments.length}
-                    onChange={handleSelectAll}
-                  />
-                  <span>{selectedIds.size} document{selectedIds.size > 1 ? 's' : ''} selected</span>
-                </span>
-                <div style={{ flex: 1 }} />
-                <div className="documents-page__selection-actions">
-                  <button>Download</button>
-                  <button>Move to Corpus</button>
-                  <button>Delete</button>
-                  <button onClick={() => setSelectedIds(new Set())}>Clear</button>
-                </div>
-              </div>
-            )}
 
             {viewMode === 'grid' && (
               <div className="documents-grid">
@@ -1458,10 +1698,12 @@ export const Default: StoryObj = {
                     document={doc}
                     selected={selectedIds.has(doc.id)}
                     onSelect={handleSelect}
+                    onContextMenu={handleContextMenu}
                   />
                 ))}
               </div>
             )}
+            </section>
 
             {contextMenu && (
               <ContextMenu
@@ -1470,7 +1712,7 @@ export const Default: StoryObj = {
                 onClose={() => setContextMenu(null)}
               />
             )}
-          </div>
+          </main>
         </div>
       </>
     );
@@ -1496,19 +1738,19 @@ export const Empty: StoryObj = {
             userMenuItems={userMenuItems}
           />
 
-          <div className="documents-page__content">
-            <div className="documents-page__header">
-              <PageHeader
-                title="Documents"
-                subtitle="Browse and manage all documents in your corpus"
-                actions={
-                  <Button variant="primary" size="sm" leftIcon={<PlusIcon />}>
-                    Upload
-                  </Button>
-                }
-              />
-            </div>
+          <main className="documents-page__content">
+            {/* Hero section */}
+            <section className="documents-page__hero">
+              <h1 className="documents-page__title">
+                Your <span>documents</span>
+              </h1>
+              <p className="documents-page__subtitle">
+                Browse, search, and manage all documents across your corpuses.
+                Upload new files or explore your existing library.
+              </p>
+            </section>
 
+            {/* Empty state */}
             <div
               style={{
                 background: 'var(--oc-bg-surface, white)',
@@ -1529,7 +1771,7 @@ export const Empty: StoryObj = {
                 }
               />
             </div>
-          </div>
+          </main>
         </div>
       </>
     );
@@ -1543,6 +1785,11 @@ export const WithSelection: StoryObj = {
     const [searchValue, setSearchValue] = useState('');
     const [viewMode, setViewMode] = useState<'grid' | 'list' | 'compact'>('grid');
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set(['1', '2', '4']));
+    const [actionMenuOpen, setActionMenuOpen] = useState(false);
+    const [contextMenu, setContextMenu] = useState<{
+      document: Document;
+      position: { x: number; y: number };
+    } | null>(null);
 
     const handleSelect = (id: string) => {
       setSelectedIds(prev => {
@@ -1556,13 +1803,18 @@ export const WithSelection: StoryObj = {
       });
     };
 
-    const handleSelectAll = () => {
-      if (selectedIds.size === sampleDocuments.length) {
-        setSelectedIds(new Set());
-      } else {
-        setSelectedIds(new Set(sampleDocuments.map(d => d.id)));
-      }
+    const handleContextMenu = (e: React.MouseEvent, doc: Document) => {
+      e.preventDefault();
+      setContextMenu({
+        document: doc,
+        position: { x: e.clientX, y: e.clientY },
+      });
     };
+
+    // Calculate stats
+    const totalPages = sampleDocuments.reduce((sum, d) => sum + (d.pages || 0), 0);
+    const processedCount = sampleDocuments.filter(d => d.status === 'processed').length;
+    const corpusCount = new Set(sampleDocuments.map(d => d.corpus).filter(Boolean)).size;
 
     return (
       <>
@@ -1578,89 +1830,115 @@ export const WithSelection: StoryObj = {
             userMenuItems={userMenuItems}
           />
 
-          <div className="documents-page__content">
-            <div className="documents-page__header">
-              <PageHeader
-                title="Documents"
-                subtitle="Browse and manage all documents in your corpus"
-                actions={
-                  <HStack gap="sm">
-                    <Button variant="ghost" size="sm" leftIcon={<FilterIcon />}>
-                      Filters
-                    </Button>
+          <main className="documents-page__content">
+            {/* Hero section */}
+            <section className="documents-page__hero">
+              <h1 className="documents-page__title">
+                Your <span>documents</span>
+              </h1>
+              <p className="documents-page__subtitle">
+                Browse, search, and manage all documents across your corpuses.
+                Upload new files or explore your existing library.
+              </p>
+
+              {/* Search */}
+              <div className="documents-page__search">
+                <SearchBox
+                  placeholder="Search for documents..."
+                  value={searchValue}
+                  onChange={(e) => setSearchValue(e.target.value)}
+                  onSubmit={(value) => console.log('Search:', value)}
+                />
+              </div>
+            </section>
+
+            {/* Stats grid */}
+            <section style={{ marginBottom: 48 }}>
+              <StatGrid columns={2}>
+                <StatBlock value={sampleDocuments.length.toString()} label="Documents" sublabel="in your library" />
+                <StatBlock value={totalPages.toLocaleString()} label="Pages" sublabel="total content" />
+                <StatBlock value={processedCount.toString()} label="Processed" sublabel="ready for analysis" />
+                <StatBlock value={corpusCount.toString()} label="Corpuses" sublabel="organized collections" />
+              </StatGrid>
+            </section>
+
+            {/* Documents section */}
+            <section>
+              <div className="documents-page__section-header">
+                <h2 className="documents-page__section-title">All Documents</h2>
+                <HStack gap="sm">
+                  <div className="documents-page__view-toggle">
+                    <button
+                      className={`documents-page__view-btn ${viewMode === 'grid' ? 'documents-page__view-btn--active' : ''}`}
+                      onClick={() => setViewMode('grid')}
+                      title="Grid view"
+                    >
+                      <GridIcon />
+                    </button>
+                    <button
+                      className={`documents-page__view-btn ${viewMode === 'list' ? 'documents-page__view-btn--active' : ''}`}
+                      onClick={() => setViewMode('list')}
+                      title="List view"
+                    >
+                      <ListIcon />
+                    </button>
+                    <button
+                      className={`documents-page__view-btn ${viewMode === 'compact' ? 'documents-page__view-btn--active' : ''}`}
+                      onClick={() => setViewMode('compact')}
+                      title="Compact view"
+                    >
+                      <CompactIcon />
+                    </button>
+                  </div>
+                  {selectedIds.size > 0 ? (
+                    <Popover
+                      open={actionMenuOpen}
+                      onOpenChange={setActionMenuOpen}
+                      placement="bottom"
+                      content={
+                        <ActionDropdown
+                          selectedCount={selectedIds.size}
+                          onClose={() => setActionMenuOpen(false)}
+                          onDownload={() => console.log('Download:', [...selectedIds])}
+                          onAddToCorpus={() => console.log('Add to corpus:', [...selectedIds])}
+                          onDelete={() => console.log('Delete:', [...selectedIds])}
+                          onClearSelection={() => setSelectedIds(new Set())}
+                        />
+                      }
+                    >
+                      <Button variant="primary" size="sm" rightIcon={<ChevronDownIcon />}>
+                        {selectedIds.size} Selected
+                      </Button>
+                    </Popover>
+                  ) : (
                     <Button variant="primary" size="sm" leftIcon={<PlusIcon />}>
                       Upload
                     </Button>
-                  </HStack>
-                }
+                  )}
+                </HStack>
+              </div>
+
+              <div className="documents-grid">
+                {sampleDocuments.map(doc => (
+                  <DocumentCard
+                    key={doc.id}
+                    document={doc}
+                    selected={selectedIds.has(doc.id)}
+                    onSelect={handleSelect}
+                    onContextMenu={handleContextMenu}
+                  />
+                ))}
+              </div>
+            </section>
+
+            {contextMenu && (
+              <ContextMenu
+                document={contextMenu.document}
+                position={contextMenu.position}
+                onClose={() => setContextMenu(null)}
               />
-            </div>
-
-            <div className="documents-page__toolbar">
-              <div className="documents-page__search">
-                <SearchInput
-                  placeholder="Search for document containing text..."
-                  value={searchValue}
-                  onChange={(e) => setSearchValue(e.target.value)}
-                  fullWidth
-                />
-              </div>
-
-              <div style={{ flex: 1 }} />
-
-              <div className="documents-page__actions">
-                <div className="documents-page__view-toggle">
-                  <button
-                    className={`documents-page__view-btn ${viewMode === 'grid' ? 'documents-page__view-btn--active' : ''}`}
-                    onClick={() => setViewMode('grid')}
-                    title="Grid view"
-                  >
-                    <GridIcon />
-                  </button>
-                  <button
-                    className={`documents-page__view-btn ${viewMode === 'list' ? 'documents-page__view-btn--active' : ''}`}
-                    onClick={() => setViewMode('list')}
-                    title="List view"
-                  >
-                    <ListIcon />
-                  </button>
-                  <button
-                    className={`documents-page__view-btn ${viewMode === 'compact' ? 'documents-page__view-btn--active' : ''}`}
-                    onClick={() => setViewMode('compact')}
-                    title="Compact view"
-                  >
-                    <CompactIcon />
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {selectedIds.size > 0 && (
-              <div className="documents-page__selection-bar">
-                <Checkbox
-                  checked={selectedIds.size === sampleDocuments.length}
-                  onChange={handleSelectAll}
-                />
-                <span>{selectedIds.size} document{selectedIds.size > 1 ? 's' : ''} selected</span>
-                <div style={{ flex: 1 }} />
-                <button>Download</button>
-                <button>Move to Corpus</button>
-                <button>Delete</button>
-                <button onClick={() => setSelectedIds(new Set())}>Clear</button>
-              </div>
             )}
-
-            <div className="documents-grid">
-              {sampleDocuments.map(doc => (
-                <DocumentCard
-                  key={doc.id}
-                  document={doc}
-                  selected={selectedIds.has(doc.id)}
-                  onSelect={handleSelect}
-                />
-              ))}
-            </div>
-          </div>
+          </main>
         </div>
       </>
     );
