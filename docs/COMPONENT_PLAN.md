@@ -35,6 +35,8 @@ A comprehensive plan for building out the component library to support a modern 
 - `Chip` / `ChipGroup` - Tags, filters, suggestions
 - `SourceCard` / `SourcePill` - Document citations
 - `Citation` - Inline reference markers
+- `ExtractCard` / `ExtractList` - Extract job cards with status
+- `DataGrid` - Tabular data display with cell actions, sorting, selection
 
 **Forms (Phase 1)**
 - `Button` / `IconButton` / `ButtonGroup` - Primary interactive elements
@@ -431,7 +433,7 @@ Right-click menu.
 7. **CommandPalette** - Power user feature
 8. **DocumentCard** - Document management
 9. **DropZone** - File uploads
-10. **Table** - Data display
+10. ~~**DataGrid**~~ ✅ - Data display with cell actions, sorting, selection
 
 ### Tier 3 (Collaboration)
 11. **ThreadCard** - Discussions

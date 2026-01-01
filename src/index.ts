@@ -445,6 +445,20 @@ export type {
   ToolbarButtonProps,
 } from './FileSystem';
 
+// ExtractCard
+export { ExtractCard, ExtractList, extractCardStyles } from './ExtractCard';
+export type { ExtractCardProps, ExtractListProps, ExtractStatus } from './ExtractCard';
+
+// DataGrid
+export { DataGrid, dataGridStyles } from './DataGrid';
+export type {
+  DataGridProps,
+  DataGridColumn,
+  DataGridColumnType,
+  CellAction,
+  SortDirection,
+} from './DataGrid';
+
 // Aggregate all CSS styles for single import
 import { utilitiesStyles } from './utilities.styles';
 import { appShellStyles } from './AppShell';
@@ -491,6 +505,8 @@ import { actionListStyles } from './ActionList';
 import { threadStyles } from './Thread';
 import { discussionStyles } from './Discussion';
 import { fileSystemStyles } from './FileSystem';
+import { extractCardStyles } from './ExtractCard';
+import { dataGridStyles } from './DataGrid';
 
 export const allStyles = `
 /* OpenContracts Design System - All Component Styles */
@@ -585,4 +601,8 @@ ${threadStyles}
 ${discussionStyles}
 
 ${fileSystemStyles}
+
+${extractCardStyles}
+
+${dataGridStyles}
 `;
