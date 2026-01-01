@@ -7,7 +7,6 @@ import { Button } from '../Button';
 import { EmptyState } from '../EmptyState';
 import { FilterTabs } from '../FilterTabs';
 import { CollectionCard, CollectionList } from '../CollectionCard';
-import { FilterPanel, FilterValues, FilterSection } from '../FilterPanel';
 import { Popover } from '../Popover';
 
 const meta: Meta = {
@@ -312,31 +311,37 @@ const pageStyles = `
     margin-bottom: 16px;
   }
 
-  /* Compact inline stats */
+  /* Stats grid - matching Discover page */
   .corpus-list-page__stats {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 24px;
-    margin-bottom: 32px;
-    padding: 16px 0;
-    border-bottom: 1px solid var(--oc-border-default, #E2E8F0);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px 48px;
+    margin-bottom: 48px;
+    padding: 32px 0;
   }
 
   .corpus-list-page__stat {
     display: flex;
-    align-items: baseline;
-    gap: 6px;
+    flex-direction: column;
+    gap: 4px;
   }
 
   .corpus-list-page__stat-value {
-    font-size: 20px;
+    font-size: 36px;
     font-weight: 600;
     color: #0F766E;
+    line-height: 1.1;
   }
 
   .corpus-list-page__stat-label {
-    font-size: 14px;
-    color: #64748B;
+    font-size: 15px;
+    font-weight: 500;
+    color: #1E293B;
+  }
+
+  .corpus-list-page__stat-desc {
+    font-size: 13px;
+    color: #94A3B8;
   }
 
   /* Section header styling (like Discover page) */
@@ -383,11 +388,11 @@ const pageStyles = `
     }
 
     .corpus-list-page__stats {
-      gap: 16px;
+      gap: 24px 32px;
     }
 
     .corpus-list-page__stat-value {
-      font-size: 18px;
+      font-size: 28px;
     }
   }
 `;
@@ -404,21 +409,6 @@ const getVisibilityStatus = (visibility: 'public' | 'private' | 'shared') => {
       return 'Private';
     case 'shared':
       return 'Shared with team';
-  }
-};
-
-const getCategoryBadge = (category: Corpus['category']) => {
-  switch (category) {
-    case 'legislation':
-      return 'Legislation';
-    case 'contracts':
-      return 'Contracts';
-    case 'case-law':
-      return 'Case Law';
-    case 'knowledge':
-      return 'Knowledge';
-    default:
-      return 'Collection';
   }
 };
 
@@ -440,52 +430,12 @@ const formatStats = (corpus: Corpus): string[] => {
 // STORY
 // ═══════════════════════════════════════════════════════════════
 
-// Filter panel sections
-const advancedFilterSections: FilterSection[] = [
-  {
-    key: 'category',
-    label: 'Category',
-    type: 'checkbox',
-    options: [
-      { value: 'legislation', label: 'Legislation', count: 2 },
-      { value: 'contracts', label: 'Contracts', count: 3 },
-      { value: 'case-law', label: 'Case Law', count: 1 },
-      { value: 'knowledge', label: 'Knowledge', count: 1 },
-    ],
-  },
-  {
-    key: 'owner',
-    label: 'Owner',
-    type: 'checkbox',
-    searchable: true,
-    searchPlaceholder: 'Search owners...',
-    options: [
-      { value: 'schen', label: 'Sarah Chen', count: 2 },
-      { value: 'mjohnson', label: 'Mike Johnson', count: 1 },
-      { value: 'arivera', label: 'Alex Rivera', count: 1 },
-      { value: 'edavis', label: 'Emma Davis', count: 1 },
-      { value: 'jscrudato', label: 'John Scrudato', count: 2 },
-    ],
-  },
-  {
-    key: 'updated',
-    label: 'Last Updated',
-    type: 'date-range',
-  },
-];
-
 export const Default: StoryObj = {
   name: 'Corpus List (Reimagined)',
   render: () => {
     const [activeNav, setActiveNav] = useState('corpuses');
     const [searchValue, setSearchValue] = useState('');
     const [activeFilter, setActiveFilter] = useState('all');
-    const [filterPanelOpen, setFilterPanelOpen] = useState(false);
-    const [advancedFilters, setAdvancedFilters] = useState<FilterValues>({
-      category: [],
-      owner: [],
-      updated: { from: '', to: '' },
-    });
 
     const filterItems = [
       { id: 'all', label: 'All' },
@@ -493,13 +443,6 @@ export const Default: StoryObj = {
       { id: 'shared', label: 'Shared', count: '1' },
       { id: 'public', label: 'Public', count: '4' },
     ];
-
-    // Count active advanced filters
-    const advancedFilterCount = Object.values(advancedFilters).reduce((count, val) => {
-      if (Array.isArray(val)) return count + val.length;
-      if (val && (val.from || val.to)) return count + 1;
-      return count;
-    }, 0);
 
     const filteredCorpuses = sampleCorpuses.filter(corpus => {
       if (activeFilter === 'my') return corpus.ownerEmail === 'jscrudato@umich.edu';
@@ -572,76 +515,35 @@ export const Default: StoryObj = {
                 />
               </div>
 
-              {/* Filter tabs with separate filter icon popover */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Popover
-                  open={filterPanelOpen}
-                  onOpenChange={setFilterPanelOpen}
-                  placement="bottom"
-                  content={
-                    <FilterPanel
-                      title="Advanced Filters"
-                      sections={advancedFilterSections}
-                      values={advancedFilters}
-                      onChange={setAdvancedFilters}
-                      onApply={() => setFilterPanelOpen(false)}
-                      onCancel={() => setFilterPanelOpen(false)}
-                    />
-                  }
-                >
-                  <button
-                    type="button"
-                    className="oc-filter-tabs__icon-button"
-                    aria-label="Advanced filters"
-                    style={{
-                      position: 'relative',
-                      ...(advancedFilterCount > 0 ? { borderColor: '#0F766E', color: '#0F766E' } : {}),
-                    }}
-                  >
-                    <svg width="16" height="16" viewBox="0 0 18 18" fill="currentColor">
-                      <path d="M1.5 2.25A.75.75 0 012.25 1.5h13.5a.75.75 0 01.75.75v2.25a.75.75 0 01-.22.53L11.25 9.56v5.19a.75.75 0 01-.39.66l-3 1.5a.75.75 0 01-1.11-.66V9.56L1.72 5.03a.75.75 0 01-.22-.53V2.25z" />
-                    </svg>
-                    {advancedFilterCount > 0 && (
-                      <span style={{
-                        position: 'absolute',
-                        top: '-4px',
-                        right: '-4px',
-                        width: '16px',
-                        height: '16px',
-                        borderRadius: '50%',
-                        background: '#0F766E',
-                        color: 'white',
-                        fontSize: '10px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                      }}>
-                        {advancedFilterCount}
-                      </span>
-                    )}
-                  </button>
-                </Popover>
-                <FilterTabs
-                  items={filterItems}
-                  value={activeFilter}
-                  onChange={setActiveFilter}
-                />
-              </div>
+              {/* Filter tabs - clean, no icon */}
+              <FilterTabs
+                items={filterItems}
+                value={activeFilter}
+                onChange={setActiveFilter}
+              />
             </section>
 
-            {/* Compact inline stats */}
+            {/* Stats grid - matching Discover page */}
             <div className="corpus-list-page__stats">
               <div className="corpus-list-page__stat">
                 <span className="corpus-list-page__stat-value">{sampleCorpuses.length}</span>
-                <span className="corpus-list-page__stat-label">corpuses</span>
+                <span className="corpus-list-page__stat-label">Corpuses</span>
+                <span className="corpus-list-page__stat-desc">in your library</span>
               </div>
               <div className="corpus-list-page__stat">
                 <span className="corpus-list-page__stat-value">{totalDocs.toLocaleString()}</span>
-                <span className="corpus-list-page__stat-label">documents</span>
+                <span className="corpus-list-page__stat-label">Documents</span>
+                <span className="corpus-list-page__stat-desc">across all corpuses</span>
               </div>
               <div className="corpus-list-page__stat">
                 <span className="corpus-list-page__stat-value">{totalAnnotations.toLocaleString()}</span>
-                <span className="corpus-list-page__stat-label">annotations</span>
+                <span className="corpus-list-page__stat-label">Annotations</span>
+                <span className="corpus-list-page__stat-desc">total contributions</span>
+              </div>
+              <div className="corpus-list-page__stat">
+                <span className="corpus-list-page__stat-value">{sampleCorpuses.filter(c => c.visibility === 'shared').length}</span>
+                <span className="corpus-list-page__stat-label">Shared</span>
+                <span className="corpus-list-page__stat-desc">with collaborators</span>
               </div>
             </div>
 
@@ -649,7 +551,7 @@ export const Default: StoryObj = {
             <section>
               <div className="corpus-list-page__section-header">
                 <h2 className="corpus-list-page__section-title">
-                  {activeFilter === 'all' ? 'All Corpuses' : filterItems.find(f => f.id === activeFilter)?.label}
+                  {activeFilter === 'all' ? 'Your Corpuses' : filterItems.find(f => f.id === activeFilter)?.label}
                 </h2>
                 <Button variant="primary" size="sm" leftIcon={<PlusIcon />}>
                   New Corpus
@@ -661,12 +563,10 @@ export const Default: StoryObj = {
                   <CollectionCard
                     key={corpus.id}
                     type={corpus.category}
-                    badge={getCategoryBadge(corpus.category)}
                     status={`${getVisibilityStatus(corpus.visibility)} • Updated ${corpus.lastUpdated}`}
                     title={corpus.title}
                     description={corpus.description}
                     stats={formatStats(corpus)}
-                    image={corpus.image}
                     onClick={() => console.log('Open corpus:', corpus.id)}
                     menu={
                       <Popover
