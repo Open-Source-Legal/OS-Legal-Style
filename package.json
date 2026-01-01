@@ -1,9 +1,9 @@
 {
-  "name": "@opencontracts/ui",
-  "version": "0.1.0",
+  "name": "@os-legal/ui",
+  "version": "0.1.1",
   "description": "React component library for OpenContracts design system",
   "main": "dist/index.js",
-  "module": "dist/index.esm.js",
+  "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "sideEffects": [
     "*.css"
@@ -16,7 +16,7 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.esm.js",
+      "import": "./dist/index.mjs",
       "require": "./dist/index.js"
     },
     "./tokens.css": "./tokens.css",

@@ -28,7 +28,7 @@ export const Popover = forwardRef<HTMLDivElement, PopoverProps>(
     ref
   ) => {
     const [internalOpen, setInternalOpen] = useState(false);
-    const [position, setPosition] = useState({ top: 0, left: 0 });
+    const [position, setPosition] = useState<{ top: number; left: number } | null>(null);
     const triggerRef = useRef<HTMLDivElement>(null);
     const popoverRef = useRef<HTMLDivElement>(null);
 
@@ -37,6 +37,9 @@ export const Popover = forwardRef<HTMLDivElement, PopoverProps>(
 
     const setOpen = useCallback(
       (value: boolean) => {
+        if (!value) {
+          setPosition(null); // Reset position when closing
+        }
         if (!isControlled) {
           setInternalOpen(value);
         }
@@ -132,7 +135,7 @@ export const Popover = forwardRef<HTMLDivElement, PopoverProps>(
         >
           {children}
         </div>
-        {open &&
+        {open && position &&
           createPortal(
             <div
               ref={(node) => {

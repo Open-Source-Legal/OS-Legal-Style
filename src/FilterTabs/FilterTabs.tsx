@@ -25,9 +25,19 @@ export interface FilterTabsProps extends Omit<HTMLAttributes<HTMLDivElement>, 'o
   size?: 'sm' | 'md' | 'lg';
   /** Visual variant */
   variant?: 'pill' | 'underline';
+  /** Show filter icon before tabs */
+  showIcon?: boolean;
+  /** Called when filter icon is clicked */
+  onIconClick?: (e: React.MouseEvent) => void;
   /** Additional class name */
   className?: string;
 }
+
+const FilterIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 18 18" fill="currentColor">
+    <path d="M1.5 2.25A.75.75 0 012.25 1.5h13.5a.75.75 0 01.75.75v2.25a.75.75 0 01-.22.53L11.25 9.56v5.19a.75.75 0 01-.39.66l-3 1.5a.75.75 0 01-1.11-.66V9.56L1.72 5.03a.75.75 0 01-.22-.53V2.25z" />
+  </svg>
+);
 
 export interface FilterTabProps extends HTMLAttributes<HTMLButtonElement> {
   /** Whether this tab is active */
@@ -102,6 +112,8 @@ export const FilterTabs = forwardRef<HTMLDivElement, FilterTabsProps>(
       onChange,
       size = 'md',
       variant = 'pill',
+      showIcon = false,
+      onIconClick,
       className = '',
       ...props
     },
@@ -117,6 +129,16 @@ export const FilterTabs = forwardRef<HTMLDivElement, FilterTabsProps>(
 
     return (
       <div ref={ref} className={classes} role="tablist" {...props}>
+        {showIcon && (
+          <button
+            type="button"
+            className="oc-filter-tabs__icon-button"
+            onClick={onIconClick}
+            aria-label="Filter options"
+          >
+            <FilterIcon />
+          </button>
+        )}
         {items.map((item) => (
           <FilterTab
             key={item.id}

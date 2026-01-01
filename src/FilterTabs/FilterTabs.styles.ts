@@ -10,6 +10,38 @@ export const filterTabsStyles = `
   flex-wrap: wrap;
 }
 
+/* Filter icon button */
+.oc-filter-tabs__icon-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  background: transparent;
+  border: 1px solid var(--oc-border-default, #E2E8F0);
+  border-radius: var(--oc-radius-full, 9999px);
+  color: var(--oc-fg-tertiary, #94A3B8);
+  cursor: pointer;
+  transition: all var(--oc-duration-fast, 0.15s) var(--oc-easing-default);
+}
+
+.oc-filter-tabs__icon-button:hover {
+  border-color: var(--oc-border-strong, #CBD5E1);
+  color: var(--oc-fg-secondary, #64748B);
+  background: var(--oc-bg-surface-hover, #F8FAFC);
+}
+
+.oc-filter-tabs__icon-button:focus-visible {
+  outline: 2px solid var(--oc-accent, #0F766E);
+  outline-offset: 2px;
+}
+
+.oc-filter-tabs__icon-button svg {
+  width: 16px;
+  height: 16px;
+}
+
 .oc-filter-tabs--underline {
   gap: 0;
   border-bottom: 1px solid var(--oc-border-default, #E2E8F0);

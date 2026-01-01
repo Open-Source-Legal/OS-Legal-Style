@@ -30,8 +30,8 @@ export const collectionCardStyles = `
 
 /* Icon */
 .oc-collection-card__icon {
-  width: 44px;
-  height: 44px;
+  width: 52px;
+  height: 52px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -42,8 +42,24 @@ export const collectionCardStyles = `
 }
 
 .oc-collection-card__icon svg {
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
+}
+
+/* Image thumbnail - clean, minimal style */
+.oc-collection-card__image {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--oc-radius-md, 10px);
+  overflow: hidden;
+  flex-shrink: 0;
+  background: var(--oc-bg-surface-hover, #F8FAFC);
+}
+
+.oc-collection-card__image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 /* Content */
@@ -113,6 +129,44 @@ export const collectionCardStyles = `
   opacity: 0.5;
 }
 
+/* Menu */
+.oc-collection-card__menu {
+  display: flex;
+  flex-shrink: 0;
+  align-self: flex-start;
+  margin-left: 8px;
+}
+
+.oc-collection-card__menu-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  min-height: 32px;
+  padding: 0;
+  background: #E0F2FE; /* DEBUG: light blue so we can see it */
+  border: 2px solid #0284C7; /* DEBUG: blue border */
+  border-radius: var(--oc-radius-sm, 6px);
+  color: var(--oc-fg-secondary, #64748B);
+  cursor: pointer;
+  transition: background-color var(--oc-duration-fast, 0.15s) var(--oc-easing-default),
+              color var(--oc-duration-fast, 0.15s) var(--oc-easing-default),
+              border-color var(--oc-duration-fast, 0.15s) var(--oc-easing-default);
+}
+
+.oc-collection-card__menu-button:hover {
+  background: #E2E8F0;
+  border-color: #94A3B8;
+  color: var(--oc-fg-primary, #1E293B);
+}
+
+.oc-collection-card__menu-button:focus-visible {
+  outline: 2px solid var(--oc-accent, #0F766E);
+  outline-offset: 2px;
+}
+
 /* ============================================
    CollectionList Component
    ============================================ */
@@ -141,9 +195,15 @@ export const collectionCardStyles = `
     gap: 12px;
   }
 
-  .oc-collection-card__icon {
-    width: 40px;
-    height: 40px;
+  .oc-collection-card__icon,
+  .oc-collection-card__image {
+    width: 44px;
+    height: 44px;
+  }
+
+  .oc-collection-card__icon svg {
+    width: 20px;
+    height: 20px;
   }
 
   .oc-collection-card__title {

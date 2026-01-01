@@ -134,6 +134,74 @@ export const CustomBadgeColor: Story = {
   ],
 };
 
+export const WithImage: Story = {
+  args: {
+    type: 'contracts',
+    badge: 'Contracts',
+    status: 'Private',
+    title: 'M&A Due Diligence - Project Alpha',
+    description: 'Confidential materials for ongoing acquisition review with detailed analysis.',
+    stats: ['234 docs', '2.9K annotations', '67 labels'],
+    image: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=100&h=100&fit=crop',
+    onClick: () => console.log('Card clicked'),
+  },
+  decorators: [
+    (Story) => (
+      <div style={{ width: 600 }}>
+        <Story />
+      </div>
+    ),
+  ],
+};
+
+export const MixedList: Story = {
+  render: () => (
+    <CollectionList gap="md">
+      <CollectionCard
+        type="legislation"
+        badge="Legislation"
+        status="Public"
+        title="Federal Securities Regulations"
+        description="SEC filings and regulatory documents for compliance analysis."
+        stats={['156 docs', '1.2K annotations']}
+        image="https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=100&h=100&fit=crop"
+      />
+      <CollectionCard
+        type="contracts"
+        badge="Contracts"
+        status="Private"
+        title="Employment Contracts Archive"
+        description="Standard employment agreements and amendments for reference."
+        stats={['89 docs', '567 annotations']}
+      />
+      <CollectionCard
+        type="contracts"
+        badge="Contracts"
+        status="Shared"
+        title="M&A Due Diligence"
+        description="Confidential materials for ongoing acquisition review."
+        stats={['234 docs', '2.9K annotations']}
+        image="https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=100&h=100&fit=crop"
+      />
+      <CollectionCard
+        type="case-law"
+        badge="Case Law"
+        status="Public"
+        title="Landmark Privacy Decisions"
+        description="Curated collection of pivotal privacy rulings across jurisdictions."
+        stats={['78 docs', '890 annotations']}
+      />
+    </CollectionList>
+  ),
+  decorators: [
+    (Story) => (
+      <div style={{ width: 700 }}>
+        <Story />
+      </div>
+    ),
+  ],
+};
+
 export const List: Story = {
   render: () => (
     <CollectionList gap="md">

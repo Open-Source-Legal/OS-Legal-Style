@@ -18,10 +18,18 @@ export interface CollectionCardProps extends HTMLAttributes<HTMLElement> {
   stats?: string[];
   /** Custom icon override */
   icon?: ReactNode;
+  /** Thumbnail image URL - displays in place of icon */
+  image?: string;
+  /** Alt text for thumbnail image */
+  imageAlt?: string;
   /** Custom badge color */
   badgeColor?: { bg: string; color: string };
   /** Click handler */
   onClick?: () => void;
+  /** Context menu content (e.g., dropdown menu) */
+  menu?: ReactNode;
+  /** Click handler for built-in kebab menu button */
+  onMenuClick?: (e: React.MouseEvent) => void;
   /** Additional class name */
   className?: string;
 }
@@ -65,6 +73,14 @@ const DefaultIcon = () => (
   </svg>
 );
 
+const KebabIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 16 16">
+    <circle cx="8" cy="3" r="1.5" fill="#64748B" />
+    <circle cx="8" cy="8" r="1.5" fill="#64748B" />
+    <circle cx="8" cy="13" r="1.5" fill="#64748B" />
+  </svg>
+);
+
 const getTypeIcon = (type: CollectionType): ReactNode => {
   switch (type) {
     case 'legislation':
@@ -105,8 +121,12 @@ export const CollectionCard = forwardRef<HTMLElement, CollectionCardProps>(
       description,
       stats,
       icon,
+      image,
+      imageAlt,
       badgeColor,
       onClick,
+      menu,
+      onMenuClick,
       className = '',
       ...props
     },
@@ -125,6 +145,23 @@ export const CollectionCard = forwardRef<HTMLElement, CollectionCardProps>(
 
     const Component = onClick ? 'article' : 'article';
 
+    // Render thumbnail image or icon
+    const renderVisual = () => {
+      if (image) {
+        return (
+          <div className="oc-collection-card__image">
+            <img src={image} alt={imageAlt || title} />
+          </div>
+        );
+      }
+      return <div className="oc-collection-card__icon">{iconElement}</div>;
+    };
+
+    const handleMenuClick = (e: React.MouseEvent) => {
+      e.stopPropagation();
+      onMenuClick?.(e);
+    };
+
     return (
       <Component
         ref={ref as any}
@@ -135,7 +172,7 @@ export const CollectionCard = forwardRef<HTMLElement, CollectionCardProps>(
         onKeyDown={onClick ? (e) => e.key === 'Enter' && onClick() : undefined}
         {...props}
       >
-        <div className="oc-collection-card__icon">{iconElement}</div>
+        {renderVisual()}
         <div className="oc-collection-card__content">
           <div className="oc-collection-card__header">
             {badge && (
@@ -160,6 +197,20 @@ export const CollectionCard = forwardRef<HTMLElement, CollectionCardProps>(
             </div>
           )}
         </div>
+        {(menu || onMenuClick) && (
+          <div className="oc-collection-card__menu">
+            {menu || (
+              <button
+                type="button"
+                className="oc-collection-card__menu-button"
+                onClick={handleMenuClick}
+                aria-label="Open menu"
+              >
+                <KebabIcon />
+              </button>
+            )}
+          </div>
+        )}
       </Component>
     );
   }
