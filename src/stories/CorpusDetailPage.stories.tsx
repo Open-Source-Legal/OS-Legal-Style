@@ -50,6 +50,10 @@ import {
   ToolbarSeparator,
   FileSystemItem,
 } from '../FileSystem';
+import { DocumentGraph } from '../DocumentGraph';
+import { RelationshipBadge } from '../RelationshipBadge';
+import { RelationshipPopoverContent, RelationshipItem } from '../RelationshipPopover';
+import type { GraphData, GraphNodeData, RelationshipLabel, DocumentRelationship, GraphDocument } from '../types/relationship';
 
 const meta: Meta = {
   title: 'Pages/CorpusDetailPage',
@@ -188,6 +192,26 @@ const MessageIcon = () => (
 const MenuIcon = () => (
   <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
     <path d="M3 4.5h12M3 9h12M3 13.5h12" />
+  </svg>
+);
+
+const GridIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+    <rect x="2" y="2" width="5" height="5" rx="1" />
+    <rect x="9" y="2" width="5" height="5" rx="1" />
+    <rect x="2" y="9" width="5" height="5" rx="1" />
+    <rect x="9" y="9" width="5" height="5" rx="1" />
+  </svg>
+);
+
+const GraphIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+    <circle cx="8" cy="8" r="2" />
+    <circle cx="3" cy="4" r="1.5" />
+    <circle cx="13" cy="4" r="1.5" />
+    <circle cx="3" cy="12" r="1.5" />
+    <circle cx="13" cy="12" r="1.5" />
+    <path d="M6.5 6.5L4.5 5M9.5 6.5L11.5 5M6.5 9.5L4.5 11M9.5 9.5L11.5 11" />
   </svg>
 );
 
@@ -2677,6 +2701,77 @@ const reimaginedPageStyles = `
       grid-template-columns: 1fr;
     }
   }
+
+  /* View toggle (grid/graph) */
+  .corpus-view-toggle {
+    display: flex;
+    background: var(--oc-bg-surface, #F8F8F8);
+    border: 1px solid var(--oc-border-default, #E2E8F0);
+    border-radius: var(--oc-radius-md, 8px);
+    padding: 2px;
+    gap: 2px;
+  }
+
+  .corpus-view-toggle__btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 28px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-radius: var(--oc-radius-sm, 6px);
+    color: var(--oc-fg-tertiary, #94A3B8);
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .corpus-view-toggle__btn:hover {
+    color: var(--oc-fg-secondary, #475569);
+    background: var(--oc-bg-surface-hover, #E2E8F0);
+  }
+
+  .corpus-view-toggle__btn--active {
+    background: white;
+    color: var(--oc-accent, #0F766E);
+    box-shadow: var(--oc-shadow-sm, 0 1px 2px rgba(0, 0, 0, 0.04));
+  }
+
+  .corpus-view-toggle__btn--active:hover {
+    background: white;
+    color: var(--oc-accent, #0F766E);
+  }
+
+  /* Graph container */
+  .corpus-graph-container {
+    background: var(--oc-bg-surface, white);
+    border: 1px solid var(--oc-border-default, #E2E8F0);
+    border-radius: var(--oc-radius-lg, 12px);
+    overflow: hidden;
+    height: 500px;
+    position: relative;
+  }
+
+  .corpus-graph-container .oc-document-graph {
+    height: 100%;
+  }
+
+  /* Relationship badge positioning on doc cards */
+  .corpus-doc-card {
+    position: relative;
+  }
+
+  .corpus-doc-card__relationship-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 2;
+  }
+
+  .corpus-doc-card:hover .corpus-doc-card__relationship-badge {
+    opacity: 1;
+  }
 `;
 
 // Icons for the redesigned page
@@ -2878,14 +2973,164 @@ const corpusDocuments = [
   },
 ];
 
+// ═══════════════════════════════════════════════════════════════
+// RELATIONSHIP DATA FOR GRAPH VISUALIZATION
+// ═══════════════════════════════════════════════════════════════
+
+const relationshipLabels: RelationshipLabel[] = [
+  { id: 'cites', text: 'cites', color: '#0F766E', description: 'Document explicitly cites another' },
+  { id: 'references', text: 'references', color: '#0284C7', description: 'General reference' },
+  { id: 'amends', text: 'amends', color: '#D97706', description: 'Modifies previous document' },
+  { id: 'supersedes', text: 'supersedes', color: '#7C3AED', description: 'Replaces entirely' },
+  { id: 'defines', text: 'defines terms for', color: '#059669', description: 'Defines terms used elsewhere' },
+];
+
+// Relationship counts per document (maps to document IDs in corpusFileSystem)
+const documentRelationshipCounts: Record<string, number> = {
+  'msa-2024': 4,
+  'nda-template': 2,
+  'employment-1': 3,
+  'vendor-2023': 1,
+  'sow-1': 2,
+  'sow-2': 1,
+  'nda-2023': 2,
+  'employment-2': 1,
+  'consulting-1': 3,
+  'license-1': 2,
+  'lease-1': 1,
+};
+
+// Full graph data for visualization
+const corpusGraphData: GraphData = {
+  focusNodeId: 'msa-2024',
+  maxDepthLoaded: 2,
+  hasMore: true,
+  nodes: [
+    { id: 'msa-2024', title: 'Master Services Agreement 2024.pdf', documentType: 'pdf', depth: 0, relationshipCount: 4 },
+    { id: 'nda-template', title: 'NDA Template Standard.docx', documentType: 'docx', depth: 1, relationshipCount: 2 },
+    { id: 'employment-1', title: 'Employment Contract - J. Smith.pdf', documentType: 'pdf', depth: 1, relationshipCount: 3 },
+    { id: 'vendor-2023', title: 'Vendor Agreement 2023.pdf', documentType: 'pdf', depth: 1, relationshipCount: 1, canExpand: true },
+    { id: 'sow-1', title: 'Statement of Work - Project Alpha.docx', documentType: 'docx', depth: 1, relationshipCount: 2 },
+    { id: 'consulting-1', title: 'Consulting Agreement - Acme Corp.pdf', documentType: 'pdf', depth: 2, relationshipCount: 3 },
+    { id: 'license-1', title: 'Software License Agreement.pdf', documentType: 'pdf', depth: 2, relationshipCount: 2 },
+  ],
+  edges: [
+    {
+      id: 'e1',
+      source: 'msa-2024',
+      target: 'nda-template',
+      relationship: {
+        id: 'r1',
+        sourceDocumentId: 'msa-2024',
+        targetDocumentId: 'nda-template',
+        label: relationshipLabels[0], // cites
+        source: 'manual',
+      },
+    },
+    {
+      id: 'e2',
+      source: 'msa-2024',
+      target: 'employment-1',
+      relationship: {
+        id: 'r2',
+        sourceDocumentId: 'msa-2024',
+        targetDocumentId: 'employment-1',
+        label: relationshipLabels[1], // references
+        source: 'analyzer',
+        analyzerId: 'ai-relationship-detector',
+      },
+    },
+    {
+      id: 'e3',
+      source: 'msa-2024',
+      target: 'vendor-2023',
+      relationship: {
+        id: 'r3',
+        sourceDocumentId: 'msa-2024',
+        targetDocumentId: 'vendor-2023',
+        label: relationshipLabels[3], // supersedes
+        source: 'manual',
+      },
+    },
+    {
+      id: 'e4',
+      source: 'msa-2024',
+      target: 'sow-1',
+      relationship: {
+        id: 'r4',
+        sourceDocumentId: 'msa-2024',
+        targetDocumentId: 'sow-1',
+        label: relationshipLabels[4], // defines terms for
+        source: 'manual',
+      },
+    },
+    {
+      id: 'e5',
+      source: 'sow-1',
+      target: 'consulting-1',
+      relationship: {
+        id: 'r5',
+        sourceDocumentId: 'sow-1',
+        targetDocumentId: 'consulting-1',
+        label: relationshipLabels[1], // references
+        source: 'analyzer',
+      },
+    },
+    {
+      id: 'e6',
+      source: 'employment-1',
+      target: 'license-1',
+      relationship: {
+        id: 'r6',
+        sourceDocumentId: 'employment-1',
+        targetDocumentId: 'license-1',
+        label: relationshipLabels[0], // cites
+        source: 'manual',
+      },
+    },
+  ],
+};
+
+// Helper to get relationships for a specific document
+const getRelationshipsForDocument = (docId: string): RelationshipItem[] => {
+  const items: RelationshipItem[] = [];
+  corpusGraphData.edges.forEach(edge => {
+    if (edge.source === docId) {
+      const targetNode = corpusGraphData.nodes.find(n => n.id === edge.target);
+      if (targetNode) {
+        items.push({
+          relationship: edge.relationship,
+          document: targetNode,
+          direction: 'outgoing',
+        });
+      }
+    } else if (edge.target === docId) {
+      const sourceNode = corpusGraphData.nodes.find(n => n.id === edge.source);
+      if (sourceNode) {
+        items.push({
+          relationship: edge.relationship,
+          document: sourceNode,
+          direction: 'incoming',
+        });
+      }
+    }
+  });
+  return items;
+};
+
 // Document card component for redesigned page
 interface CorpusDocCardProps {
-  doc: typeof corpusDocuments[0];
+  doc: typeof corpusDocuments[0] & { relationshipCount?: number };
   selected?: boolean;
   onSelect?: (id: string) => void;
+  onRelationshipClick?: (docId: string) => void;
 }
 
-const CorpusDocCard: React.FC<CorpusDocCardProps> = ({ doc, selected = false, onSelect }) => {
+const CorpusDocCard: React.FC<CorpusDocCardProps> = ({ doc, selected = false, onSelect, onRelationshipClick }) => {
+  const [popoverOpen, setPopoverOpen] = React.useState(false);
+  const relationshipCount = doc.relationshipCount || documentRelationshipCounts[doc.id] || 0;
+  const relationships = getRelationshipsForDocument(doc.id);
+
   return (
     <div className={`corpus-doc-card ${selected ? 'corpus-doc-card--selected' : ''}`}>
       <div className="corpus-doc-card__checkbox" onClick={(e) => e.stopPropagation()}>
@@ -2904,6 +3149,32 @@ const CorpusDocCard: React.FC<CorpusDocCardProps> = ({ doc, selected = false, on
             {doc.type.toUpperCase()}
           </Chip>
         </div>
+        {/* Relationship badge on preview */}
+        {relationshipCount > 0 && (
+          <div className="corpus-doc-card__relationship-badge">
+            <Popover
+              open={popoverOpen}
+              onOpenChange={setPopoverOpen}
+              trigger="click"
+              placement="bottom"
+              content={
+                <RelationshipPopoverContent
+                  relationships={relationships}
+                  onRelationshipClick={(item) => {
+                    setPopoverOpen(false);
+                    console.log('Navigate to:', item.document.title);
+                  }}
+                  onViewInGraph={() => {
+                    setPopoverOpen(false);
+                    onRelationshipClick?.(doc.id);
+                  }}
+                />
+              }
+            >
+              <RelationshipBadge count={relationshipCount} size="sm" />
+            </Popover>
+          </div>
+        )}
       </div>
       <div className="corpus-doc-card__body">
         <h3 className="corpus-doc-card__name" title={doc.name}>{doc.name}</h3>
@@ -3037,6 +3308,10 @@ export const Reimagined: StoryObj = {
     const [currentPath, setCurrentPath] = useState<string[]>(['Contracts', 'Active']);
     const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set(['Contracts']));
     const [chatValue, setChatValue] = useState('');
+    // Graph view state
+    const [documentsViewMode, setDocumentsViewMode] = useState<'grid' | 'graph'>('grid');
+    const [graphFocusNodeId, setGraphFocusNodeId] = useState<string | undefined>('msa-2024');
+    const [graphFilters, setGraphFilters] = useState<string[]>([]);
 
     // Section navigation items
     const sectionNavItems = [
@@ -3329,33 +3604,83 @@ export const Reimagined: StoryObj = {
                     <div className="corpus-detail-section-header">
                       <h2 className="corpus-detail-section-title">Documents</h2>
                       <HStack gap="sm">
-                        <Button variant="ghost" size="sm" leftIcon={<NewFolderIcon2 />}>
-                          New Folder
-                        </Button>
-                        {selectedIds.size > 0 ? (
-                          <Popover
-                            open={actionMenuOpen}
-                            onOpenChange={setActionMenuOpen}
-                            placement="bottom"
-                            content={
-                              <CorpusActionDropdown
-                                selectedCount={selectedIds.size}
-                                onClose={() => setActionMenuOpen(false)}
-                              />
-                            }
+                        {/* View toggle */}
+                        <div className="corpus-view-toggle">
+                          <button
+                            className={`corpus-view-toggle__btn ${documentsViewMode === 'grid' ? 'corpus-view-toggle__btn--active' : ''}`}
+                            onClick={() => setDocumentsViewMode('grid')}
+                            title="Grid view"
                           >
-                            <Button variant="primary" size="sm" rightIcon={<ChevronDownIcon2 />}>
-                              {selectedIds.size} Selected
+                            <GridIcon />
+                          </button>
+                          <button
+                            className={`corpus-view-toggle__btn ${documentsViewMode === 'graph' ? 'corpus-view-toggle__btn--active' : ''}`}
+                            onClick={() => setDocumentsViewMode('graph')}
+                            title="Graph view"
+                          >
+                            <GraphIcon />
+                          </button>
+                        </div>
+                        {documentsViewMode === 'grid' && (
+                          <>
+                            <Button variant="ghost" size="sm" leftIcon={<NewFolderIcon2 />}>
+                              New Folder
                             </Button>
-                          </Popover>
-                        ) : (
-                          <Button variant="primary" size="sm" leftIcon={<PlusIcon />}>
-                            Upload
-                          </Button>
+                            {selectedIds.size > 0 ? (
+                              <Popover
+                                open={actionMenuOpen}
+                                onOpenChange={setActionMenuOpen}
+                                placement="bottom"
+                                content={
+                                  <CorpusActionDropdown
+                                    selectedCount={selectedIds.size}
+                                    onClose={() => setActionMenuOpen(false)}
+                                  />
+                                }
+                              >
+                                <Button variant="primary" size="sm" rightIcon={<ChevronDownIcon2 />}>
+                                  {selectedIds.size} Selected
+                                </Button>
+                              </Popover>
+                            ) : (
+                              <Button variant="primary" size="sm" leftIcon={<PlusIcon />}>
+                                Upload
+                              </Button>
+                            )}
+                          </>
                         )}
                       </HStack>
                     </div>
 
+                    {/* GRAPH VIEW */}
+                    {documentsViewMode === 'graph' && (
+                      <div className="corpus-graph-container">
+                        <DocumentGraph
+                          data={{
+                            ...corpusGraphData,
+                            focusNodeId: graphFocusNodeId,
+                          }}
+                          selectedNodeId={graphFocusNodeId}
+                          onNodeSelect={(node) => {
+                            if (node) {
+                              setGraphFocusNodeId(node.id);
+                            }
+                          }}
+                          onNodeExpand={(node) => {
+                            console.log('Expand:', node.title);
+                          }}
+                          relationshipLabels={relationshipLabels}
+                          activeFilters={graphFilters}
+                          onFiltersChange={setGraphFilters}
+                          canLoadMore={corpusGraphData.hasMore}
+                          onLoadMore={() => console.log('Load more connections')}
+                          initialLayout="force"
+                        />
+                      </div>
+                    )}
+
+                    {/* GRID VIEW */}
+                    {documentsViewMode === 'grid' && (
                     <div className="corpus-fs-layout">
                       {/* Folder tree sidebar */}
                       <div className="corpus-fs-sidebar">
@@ -3436,6 +3761,10 @@ export const Reimagined: StoryObj = {
                                     }}
                                     selected={selectedIds.has(doc.id)}
                                     onSelect={handleSelect}
+                                    onRelationshipClick={(docId) => {
+                                      setGraphFocusNodeId(docId);
+                                      setDocumentsViewMode('graph');
+                                    }}
                                   />
                                 ))}
                               </div>
@@ -3458,6 +3787,7 @@ export const Reimagined: StoryObj = {
                         </div>
                       </div>
                     </div>
+                    )}
                   </section>
                 )}
 
