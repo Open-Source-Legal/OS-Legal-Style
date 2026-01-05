@@ -459,6 +459,56 @@ export type {
   SortDirection,
 } from './DataGrid';
 
+// Graph - Relationship Types
+export type {
+  RelationshipLabel,
+  RelationshipSource,
+  DocumentRelationship,
+  GraphDocument,
+  Position,
+  GraphNodeData,
+  GraphEdgeData,
+  GraphData,
+  GraphLayout,
+  GraphFilters,
+} from './types/relationship';
+
+// Graph - Node (signature primitive)
+export { Node, nodeStyles } from './Node';
+export type { NodeProps, NodeSize, NodeVariant } from './Node';
+
+// Graph - Edge (connection line)
+export { Edge, edgeStyles } from './Edge';
+export type { EdgeProps, EdgeVariant } from './Edge';
+
+// Graph - RelationshipBadge
+export { RelationshipBadge, relationshipBadgeStyles } from './RelationshipBadge';
+export type { RelationshipBadgeProps } from './RelationshipBadge';
+
+// Graph - RelationshipPill
+export { RelationshipPill, relationshipPillStyles } from './RelationshipPill';
+export type { RelationshipPillProps } from './RelationshipPill';
+
+// Graph - RelationshipPopover
+export { RelationshipPopoverContent, relationshipPopoverStyles } from './RelationshipPopover';
+export type { RelationshipPopoverContentProps, RelationshipItem } from './RelationshipPopover';
+
+// Graph - DocumentGraph
+export {
+  DocumentGraph,
+  GraphNode,
+  GraphEdge,
+  GraphControls,
+  useGraphLayout,
+  documentGraphStyles,
+} from './DocumentGraph';
+export type {
+  DocumentGraphProps,
+  GraphNodeProps,
+  GraphEdgeProps,
+  GraphControlsProps,
+} from './DocumentGraph';
+
 // Aggregate all CSS styles for single import
 import { utilitiesStyles } from './utilities.styles';
 import { appShellStyles } from './AppShell';
@@ -507,6 +557,12 @@ import { discussionStyles } from './Discussion';
 import { fileSystemStyles } from './FileSystem';
 import { extractCardStyles } from './ExtractCard';
 import { dataGridStyles } from './DataGrid';
+import { nodeStyles } from './Node';
+import { edgeStyles } from './Edge';
+import { relationshipBadgeStyles } from './RelationshipBadge';
+import { relationshipPillStyles } from './RelationshipPill';
+import { relationshipPopoverStyles } from './RelationshipPopover';
+import { documentGraphStyles } from './DocumentGraph';
 
 export const allStyles = `
 /* OpenContracts Design System - All Component Styles */
@@ -605,4 +661,16 @@ ${fileSystemStyles}
 ${extractCardStyles}
 
 ${dataGridStyles}
+
+${nodeStyles}
+
+${edgeStyles}
+
+${relationshipBadgeStyles}
+
+${relationshipPillStyles}
+
+${relationshipPopoverStyles}
+
+${documentGraphStyles}
 `;

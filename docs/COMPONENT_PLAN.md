@@ -64,6 +64,17 @@ A comprehensive plan for building out the component library to support a modern 
 **Navigation**
 - `Tabs` / `TabList` / `Tab` / `TabPanels` / `TabPanel` - Tab navigation
 
+**Graph / Relationships**
+- `Node` - Signature visual element (teal circles echoing the logo)
+- `Edge` - SVG connection line between nodes
+- `RelationshipBadge` - Compact indicator showing relationship count (○─3)
+- `RelationshipPill` - Single relationship display with document title and type
+- `RelationshipPopoverContent` - Popover content listing related documents
+- `DocumentGraph` - Full graph visualization with force/hierarchical layouts
+- `GraphNode` - Document node in graph with title and icon
+- `GraphEdge` - Relationship edge with labels and arrows
+- `GraphControls` - Zoom, layout toggle, filters, load more
+
 ---
 
 ## Remaining Components (Phase 2+)
