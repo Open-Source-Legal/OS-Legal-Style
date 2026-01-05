@@ -2765,12 +2765,8 @@ const reimaginedPageStyles = `
   .corpus-doc-card__relationship-badge {
     position: absolute;
     top: 8px;
-    right: 8px;
-    z-index: 2;
-  }
-
-  .corpus-doc-card:hover .corpus-doc-card__relationship-badge {
-    opacity: 1;
+    left: 8px;
+    z-index: 3;
   }
 `;
 
