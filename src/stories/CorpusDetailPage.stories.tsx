@@ -2768,6 +2768,29 @@ const reimaginedPageStyles = `
     left: 8px;
     z-index: 3;
   }
+
+  .corpus-doc-card__relationship-badge .oc-relationship-badge {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(4px);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+    border-radius: 20px;
+    padding: 4px 10px 4px 6px;
+  }
+
+  .corpus-doc-card__relationship-badge .oc-relationship-badge__count {
+    color: var(--oc-accent, #0F766E);
+    font-weight: 600;
+    font-size: 12px;
+  }
+
+  .corpus-doc-card__relationship-badge .oc-relationship-badge__connector {
+    background-color: var(--oc-accent, #0F766E);
+    width: 8px;
+  }
+
+  .corpus-doc-card__relationship-badge .oc-node {
+    background-color: var(--oc-accent, #0F766E);
+  }
 `;
 
 // Icons for the redesigned page
@@ -3164,7 +3187,7 @@ const CorpusDocCard: React.FC<CorpusDocCardProps> = ({ doc, selected = false, on
                 />
               }
             >
-              <RelationshipBadge count={relationshipCount} size="sm" />
+              <RelationshipBadge count={relationshipCount} size="md" />
             </Popover>
           </div>
         )}
