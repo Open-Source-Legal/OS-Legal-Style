@@ -2770,26 +2770,38 @@ const reimaginedPageStyles = `
   }
 
   .corpus-doc-card__relationship-badge .oc-relationship-badge {
-    background: rgba(255, 255, 255, 0.95);
+    background: var(--oc-accent, #0F766E);
     backdrop-filter: blur(4px);
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 2px 8px rgba(15, 118, 110, 0.4);
     border-radius: 20px;
-    padding: 4px 10px 4px 6px;
+    padding: 6px 12px 6px 8px;
+    gap: 4px;
+  }
+
+  .corpus-doc-card__relationship-badge .oc-relationship-badge:hover {
+    background: var(--oc-accent-hover, #0D6B63);
+    box-shadow: 0 4px 12px rgba(15, 118, 110, 0.5);
   }
 
   .corpus-doc-card__relationship-badge .oc-relationship-badge__count {
-    color: var(--oc-accent, #0F766E);
-    font-weight: 600;
-    font-size: 12px;
+    color: white;
+    font-weight: 700;
+    font-size: 14px;
   }
 
   .corpus-doc-card__relationship-badge .oc-relationship-badge__connector {
-    background-color: var(--oc-accent, #0F766E);
-    width: 8px;
+    background-color: rgba(255, 255, 255, 0.6);
+    width: 10px;
+    height: 2px;
   }
 
   .corpus-doc-card__relationship-badge .oc-node {
-    background-color: var(--oc-accent, #0F766E);
+    background-color: white;
+    width: 10px;
+    height: 10px;
+    min-width: 10px;
+    min-height: 10px;
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
   }
 `;
 
