@@ -2990,14 +2990,12 @@ const documentRelationshipCounts: Record<string, number> = {
   'msa-2024': 4,
   'nda-template': 2,
   'employment-1': 3,
+  'standard-nda': 1,
+  'sow-template': 2,
+  'case-analysis': 1,
   'vendor-2023': 1,
-  'sow-1': 2,
-  'sow-2': 1,
-  'nda-2023': 2,
-  'employment-2': 1,
   'consulting-1': 3,
   'license-1': 2,
-  'lease-1': 1,
 };
 
 // Full graph data for visualization
@@ -3009,10 +3007,9 @@ const corpusGraphData: GraphData = {
     { id: 'msa-2024', title: 'Master Services Agreement 2024.pdf', documentType: 'pdf', depth: 0, relationshipCount: 4 },
     { id: 'nda-template', title: 'NDA Template Standard.docx', documentType: 'docx', depth: 1, relationshipCount: 2 },
     { id: 'employment-1', title: 'Employment Contract - J. Smith.pdf', documentType: 'pdf', depth: 1, relationshipCount: 3 },
-    { id: 'vendor-2023', title: 'Vendor Agreement 2023.pdf', documentType: 'pdf', depth: 1, relationshipCount: 1, canExpand: true },
-    { id: 'sow-1', title: 'Statement of Work - Project Alpha.docx', documentType: 'docx', depth: 1, relationshipCount: 2 },
-    { id: 'consulting-1', title: 'Consulting Agreement - Acme Corp.pdf', documentType: 'pdf', depth: 2, relationshipCount: 3 },
-    { id: 'license-1', title: 'Software License Agreement.pdf', documentType: 'pdf', depth: 2, relationshipCount: 2 },
+    { id: 'standard-nda', title: 'Standard NDA v2.docx', documentType: 'docx', depth: 1, relationshipCount: 1 },
+    { id: 'sow-template', title: 'SOW Template.docx', documentType: 'docx', depth: 1, relationshipCount: 2 },
+    { id: 'case-analysis', title: 'Case Analysis Q4.pdf', documentType: 'pdf', depth: 2, relationshipCount: 1, canExpand: true },
   ],
   edges: [
     {
@@ -3043,11 +3040,11 @@ const corpusGraphData: GraphData = {
     {
       id: 'e3',
       source: 'msa-2024',
-      target: 'vendor-2023',
+      target: 'standard-nda',
       relationship: {
         id: 'r3',
         sourceDocumentId: 'msa-2024',
-        targetDocumentId: 'vendor-2023',
+        targetDocumentId: 'standard-nda',
         label: relationshipLabels[3], // supersedes
         source: 'manual',
       },
@@ -3055,35 +3052,35 @@ const corpusGraphData: GraphData = {
     {
       id: 'e4',
       source: 'msa-2024',
-      target: 'sow-1',
+      target: 'sow-template',
       relationship: {
         id: 'r4',
         sourceDocumentId: 'msa-2024',
-        targetDocumentId: 'sow-1',
+        targetDocumentId: 'sow-template',
         label: relationshipLabels[4], // defines terms for
         source: 'manual',
       },
     },
     {
       id: 'e5',
-      source: 'sow-1',
-      target: 'consulting-1',
+      source: 'sow-template',
+      target: 'case-analysis',
       relationship: {
         id: 'r5',
-        sourceDocumentId: 'sow-1',
-        targetDocumentId: 'consulting-1',
+        sourceDocumentId: 'sow-template',
+        targetDocumentId: 'case-analysis',
         label: relationshipLabels[1], // references
         source: 'analyzer',
       },
     },
     {
       id: 'e6',
-      source: 'employment-1',
-      target: 'license-1',
+      source: 'nda-template',
+      target: 'employment-1',
       relationship: {
         id: 'r6',
-        sourceDocumentId: 'employment-1',
-        targetDocumentId: 'license-1',
+        sourceDocumentId: 'nda-template',
+        targetDocumentId: 'employment-1',
         label: relationshipLabels[0], // cites
         source: 'manual',
       },
