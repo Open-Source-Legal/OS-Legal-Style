@@ -175,6 +175,17 @@ export type { TextareaProps } from './Textarea';
 export { Select, selectStyles } from './Select';
 export type { SelectProps, SelectOption, SelectOptionGroup, SelectSize } from './Select';
 
+// Dropdown
+export { Dropdown, dropdownStyles } from './Dropdown';
+export type {
+  DropdownProps,
+  DropdownOption,
+  DropdownMode,
+  DropdownItemProps,
+  DropdownHeaderProps,
+  TriggerRenderProps,
+} from './Dropdown';
+
 // Checkbox
 export { Checkbox, CheckboxGroup, checkboxStyles } from './Checkbox';
 export type { CheckboxProps, CheckboxGroupProps } from './Checkbox';
@@ -563,6 +574,7 @@ import { relationshipBadgeStyles } from './RelationshipBadge';
 import { relationshipPillStyles } from './RelationshipPill';
 import { relationshipPopoverStyles } from './RelationshipPopover';
 import { documentGraphStyles } from './DocumentGraph';
+import { dropdownStyles } from './Dropdown';
 
 export const allStyles = `
 /* OpenContracts Design System - All Component Styles */
@@ -673,4 +685,6 @@ ${relationshipPillStyles}
 ${relationshipPopoverStyles}
 
 ${documentGraphStyles}
+
+${dropdownStyles}
 `;

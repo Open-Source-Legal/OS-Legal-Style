@@ -43,6 +43,7 @@ A comprehensive plan for building out the component library to support a modern 
 - `Input` - Text input with icons and addons
 - `Textarea` - Multi-line input with auto-resize
 - `Select` - Dropdown with search, groups, clearable
+- `Dropdown` - Unified dropdown with menu, select, multiselect, and async search modes (compound components: `Dropdown.Item`, `Dropdown.Divider`, `Dropdown.Header`)
 - `Checkbox` / `CheckboxGroup` - Binary/multiple selection
 - `Radio` / `RadioGroup` - Single selection from group
 - `Toggle` / `Switch` - On/off toggle
