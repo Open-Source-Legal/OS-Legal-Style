@@ -1,7 +1,7 @@
 import React, { forwardRef, ReactNode, HTMLAttributes, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 
-export type ModalSize = 'sm' | 'md' | 'lg' | 'xl' | 'full';
+export type ModalSize = 'sm' | 'md' | 'lg' | 'xl' | 'full' | 'fullscreen';
 
 export interface ModalProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'> {
   open: boolean;
@@ -9,6 +9,7 @@ export interface ModalProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'
   size?: ModalSize;
   closeOnOverlay?: boolean;
   closeOnEscape?: boolean;
+  overlayClassName?: string;
   children?: ReactNode;
 }
 
@@ -32,6 +33,7 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(
       size = 'md',
       closeOnOverlay = true,
       closeOnEscape = true,
+      overlayClassName = '',
       className = '',
       children,
       ...props
@@ -72,8 +74,13 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(
       className,
     ].filter(Boolean).join(' ');
 
+    const overlayClasses = [
+      'oc-modal-overlay',
+      overlayClassName,
+    ].filter(Boolean).join(' ');
+
     const content = (
-      <div className="oc-modal-overlay" onClick={handleOverlayClick}>
+      <div className={overlayClasses} onClick={handleOverlayClick}>
         <div ref={ref} className={modalClasses} role="dialog" aria-modal="true" {...props}>
           {children}
         </div>
