@@ -17,7 +17,7 @@ const meta: Meta<typeof Modal> = {
   argTypes: {
     size: {
       control: 'select',
-      options: ['sm', 'md', 'lg', 'xl', 'full'],
+      options: ['sm', 'md', 'lg', 'xl', 'full', 'fullscreen'],
     },
     closeOnOverlay: {
       control: 'boolean',
@@ -31,7 +31,7 @@ const meta: Meta<typeof Modal> = {
 export default meta;
 type Story = StoryObj<typeof Modal>;
 
-const ModalDemo = ({ size = 'md' }: { size?: 'sm' | 'md' | 'lg' | 'xl' | 'full' }) => {
+const ModalDemo = ({ size = 'md', overlayClassName }: { size?: 'sm' | 'md' | 'lg' | 'xl' | 'full' | 'fullscreen'; overlayClassName?: string }) => {
   const [open, setOpen] = useState(false);
 
   return (
@@ -51,7 +51,7 @@ const ModalDemo = ({ size = 'md' }: { size?: 'sm' | 'md' | 'lg' | 'xl' | 'full' 
         Open Modal
       </button>
 
-      <Modal open={open} onClose={() => setOpen(false)} size={size}>
+      <Modal open={open} onClose={() => setOpen(false)} size={size} overlayClassName={overlayClassName}>
         <ModalHeader
           title="Modal Title"
           subtitle="Optional subtitle text"
@@ -107,6 +107,138 @@ export const Small: Story = {
 
 export const Large: Story = {
   render: () => <ModalDemo size="lg" />,
+};
+
+export const Fullscreen: Story = {
+  render: () => {
+    const [open, setOpen] = useState(false);
+
+    return (
+      <>
+        <button
+          onClick={() => setOpen(true)}
+          style={{
+            padding: '10px 20px',
+            background: '#E85A4F',
+            color: 'white',
+            border: 'none',
+            borderRadius: '8px',
+            cursor: 'pointer',
+            fontWeight: 500,
+          }}
+        >
+          Open Fullscreen Modal
+        </button>
+
+        <Modal open={open} onClose={() => setOpen(false)} size="fullscreen">
+          <ModalHeader
+            title="Document Viewer"
+            subtitle="Fullscreen modal for immersive content"
+            onClose={() => setOpen(false)}
+          />
+          <ModalBody>
+            <div style={{ display: 'flex', flexDirection: 'column', height: '100%', gap: '16px' }}>
+              <p style={{ margin: 0, color: '#666' }}>
+                This fullscreen modal fills the entire viewport — ideal for PDF viewers,
+                document editors, or other immersive content.
+              </p>
+              <div
+                style={{
+                  flex: 1,
+                  background: '#f0f0f0',
+                  borderRadius: '8px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#999',
+                  fontSize: '18px',
+                  minHeight: '200px',
+                }}
+              >
+                PDF / Document content area
+              </div>
+            </div>
+          </ModalBody>
+          <ModalFooter>
+            <button
+              onClick={() => setOpen(false)}
+              style={{
+                padding: '8px 16px',
+                background: 'transparent',
+                color: '#1A1A1A',
+                border: '1px solid #E5E5E5',
+                borderRadius: '8px',
+                cursor: 'pointer',
+              }}
+            >
+              Close
+            </button>
+          </ModalFooter>
+        </Modal>
+      </>
+    );
+  },
+};
+
+export const WithOverlayClassName: Story = {
+  render: () => {
+    const [open, setOpen] = useState(false);
+
+    return (
+      <>
+        <style>{`.custom-overlay { background: rgba(229, 90, 79, 0.15) !important; }`}</style>
+        <button
+          onClick={() => setOpen(true)}
+          style={{
+            padding: '10px 20px',
+            background: '#E85A4F',
+            color: 'white',
+            border: 'none',
+            borderRadius: '8px',
+            cursor: 'pointer',
+            fontWeight: 500,
+          }}
+        >
+          Open Modal with Custom Overlay
+        </button>
+
+        <Modal
+          open={open}
+          onClose={() => setOpen(false)}
+          size="md"
+          overlayClassName="custom-overlay"
+        >
+          <ModalHeader
+            title="Custom Overlay"
+            subtitle="The overlay behind this modal uses a custom class"
+            onClose={() => setOpen(false)}
+          />
+          <ModalBody>
+            <p style={{ margin: 0 }}>
+              The <code>overlayClassName</code> prop lets you style the overlay container.
+              This example uses a coral-tinted overlay instead of the default dark backdrop.
+            </p>
+          </ModalBody>
+          <ModalFooter>
+            <button
+              onClick={() => setOpen(false)}
+              style={{
+                padding: '8px 16px',
+                background: '#E85A4F',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontWeight: 500,
+              }}
+            >
+              Got it
+            </button>
+          </ModalFooter>
+        </Modal>
+      </>
+    );
+  },
 };
 
 export const Confirmation: Story = {

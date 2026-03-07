@@ -32,6 +32,12 @@ export const modalStyles = `
 .oc-modal--lg { width: 100%; max-width: 640px; }
 .oc-modal--xl { width: 100%; max-width: 800px; }
 .oc-modal--full { width: 100%; max-width: calc(100vw - 32px); height: calc(100vh - 32px); }
+.oc-modal--fullscreen { width: 100vw; max-width: 100vw; height: 100vh; border-radius: 0; }
+
+/* Fullscreen overlay removes padding */
+.oc-modal-overlay:has(.oc-modal--fullscreen) {
+  padding: 0;
+}
 
 /* Modal Header */
 .oc-modal-header {
