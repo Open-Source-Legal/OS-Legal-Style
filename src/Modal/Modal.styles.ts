@@ -88,6 +88,7 @@ export const modalStyles = `
 /* Modal Body */
 .oc-modal-body {
   flex: 1;
+  min-height: 0;
   padding: var(--oc-spacing-lg);
   overflow-y: auto;
   color: var(--oc-fg-primary);
