@@ -19,7 +19,7 @@ export const dropdownStyles = `
   align-items: center;
   justify-content: space-between;
   gap: var(--oc-spacing-sm);
-  min-height: 38px;
+  min-height: 44px;
   padding: 6px 12px;
   background: var(--oc-bg-surface);
   border: 1px solid var(--oc-border-default);
@@ -273,6 +273,7 @@ export const dropdownStyles = `
   display: flex;
   align-items: center;
   gap: var(--oc-spacing-sm);
+  min-height: 44px;
   padding: 10px 14px;
   border-bottom: 1px solid var(--oc-border-default);
 }
@@ -351,6 +352,7 @@ export const dropdownStyles = `
   display: flex;
   align-items: center;
   gap: var(--oc-spacing-sm);
+  min-height: 44px;
   padding: 10px 14px;
   font-size: var(--oc-font-size-sm);
   color: var(--oc-fg-primary);
@@ -447,6 +449,7 @@ export const dropdownStyles = `
   display: flex;
   align-items: center;
   gap: var(--oc-spacing-sm);
+  min-height: 44px;
   padding: 10px 14px;
   font-size: var(--oc-font-size-sm);
   color: var(--oc-fg-primary);
@@ -540,13 +543,30 @@ export const dropdownStyles = `
 /* ─── Responsive ───────────────────────────────────────────────────────── */
 
 @media (max-width: 600px) {
+  /* 16px minimum prevents iOS Safari auto-zoom on focus */
   .oc-dropdown__trigger {
-    min-height: 44px;
+    font-size: 16px;
+  }
+
+  .oc-dropdown__search-input {
+    font-size: 16px;
   }
 
   .oc-dropdown--fluid .oc-dropdown__menu {
     left: 0;
     right: 0;
+  }
+}
+
+/* ─── Coarse pointer (touch) feedback ─────────────────────────────────── */
+
+@media (pointer: coarse) {
+  .oc-dropdown__option:active:not(.oc-dropdown__option--disabled) {
+    background: rgba(15, 118, 110, 0.12);
+  }
+
+  .oc-dropdown__item:active:not(.oc-dropdown__item--disabled) {
+    background: rgba(15, 118, 110, 0.12);
   }
 }
 `;
