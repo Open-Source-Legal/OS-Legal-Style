@@ -773,6 +773,123 @@ describe('Dropdown — Ref forwarding', () => {
   });
 });
 
+// ─── onBlur ──────────────────────────────────────────────────────────────
+
+describe('Dropdown — onBlur', () => {
+  it('fires onBlur when focus leaves the dropdown', () => {
+    const handleBlur = vi.fn();
+    const { container } = render(
+      <div>
+        <Dropdown
+          mode="select"
+          options={basicOptions}
+          aria-label="Blur test"
+          onBlur={handleBlur}
+        />
+        <button data-testid="outside">Outside</button>
+      </div>
+    );
+
+    const trigger = screen.getByRole('combobox');
+    trigger.focus();
+
+    // Move focus to outside button
+    fireEvent.blur(trigger, {
+      relatedTarget: screen.getByTestId('outside'),
+    });
+
+    expect(handleBlur).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not fire onBlur for internal focus transfers (trigger → menu)', () => {
+    const handleBlur = vi.fn();
+    const { container } = render(
+      <Dropdown
+        mode="select"
+        options={basicOptions}
+        aria-label="Internal blur test"
+        onBlur={handleBlur}
+        searchable="local"
+      />
+    );
+
+    const trigger = screen.getByRole('combobox');
+    trigger.focus();
+    fireEvent.click(trigger);
+
+    // Search input should now be focused — this is an internal transfer
+    const searchInput = screen.getByRole('searchbox');
+    fireEvent.blur(trigger, { relatedTarget: searchInput });
+
+    expect(handleBlur).not.toHaveBeenCalled();
+  });
+
+  it('fires onBlur when tabbing away without opening menu', () => {
+    const handleBlur = vi.fn();
+    render(
+      <div>
+        <Dropdown
+          mode="select"
+          options={basicOptions}
+          aria-label="Tab blur test"
+          onBlur={handleBlur}
+        />
+        <button data-testid="next">Next</button>
+      </div>
+    );
+
+    const trigger = screen.getByRole('combobox');
+    trigger.focus();
+
+    // Tab away — fires blur with relatedTarget outside the dropdown
+    fireEvent.blur(trigger, {
+      relatedTarget: screen.getByTestId('next'),
+    });
+
+    expect(handleBlur).toHaveBeenCalledTimes(1);
+  });
+
+  it('fires onBlur in menu mode when focus leaves', () => {
+    const handleBlur = vi.fn();
+    render(
+      <div>
+        <Dropdown mode="menu" aria-label="Menu blur test" onBlur={handleBlur}>
+          <Dropdown.Item onClick={() => {}}>Action</Dropdown.Item>
+        </Dropdown>
+        <button data-testid="other">Other</button>
+      </div>
+    );
+
+    const trigger = screen.getByRole('button', { name: 'Menu blur test' });
+    trigger.focus();
+
+    fireEvent.blur(trigger, {
+      relatedTarget: screen.getByTestId('other'),
+    });
+
+    expect(handleBlur).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not fire when onBlur prop is not provided', () => {
+    // Just ensure no errors when onBlur is omitted
+    render(
+      <div>
+        <Dropdown
+          mode="select"
+          options={basicOptions}
+          aria-label="No blur handler"
+        />
+        <button data-testid="out">Out</button>
+      </div>
+    );
+
+    const trigger = screen.getByRole('combobox');
+    trigger.focus();
+    fireEvent.blur(trigger, { relatedTarget: screen.getByTestId('out') });
+    // No error thrown
+  });
+});
+
 // ─── displayName ─────────────────────────────────────────────────────────
 
 describe('Dropdown — displayName', () => {

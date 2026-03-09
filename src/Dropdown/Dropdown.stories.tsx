@@ -624,3 +624,36 @@ export const AllModes: Story = {
     ),
   ],
 };
+
+// ─── onBlur callback ──────────────────────────────────────────────────────
+
+export const OnBlurCallback: Story = {
+  render: () => {
+    const [blurCount, setBlurCount] = useState(0);
+    const [lastEvent, setLastEvent] = useState('');
+
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <div style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#94a3b8' }}>
+          onBlur — focus the dropdown, then tab or click away
+        </div>
+        <Dropdown
+          mode="select"
+          options={embeddingModels}
+          placeholder="Select model"
+          aria-label="onBlur demo"
+          onBlur={() => {
+            setBlurCount(c => c + 1);
+            setLastEvent(new Date().toLocaleTimeString());
+          }}
+          searchable="local"
+        />
+        <input placeholder="Tab target (focus me)" style={{ padding: '8px 12px', border: '1px solid #e2e8f0', borderRadius: 6 }} />
+        <div style={{ fontSize: 13, color: '#64748b' }}>
+          Blur count: <strong>{blurCount}</strong>
+          {lastEvent && <> — last at {lastEvent}</>}
+        </div>
+      </div>
+    );
+  },
+};
