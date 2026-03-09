@@ -657,3 +657,34 @@ export const OnBlurCallback: Story = {
     );
   },
 };
+
+// ─── Icon Size ────────────────────────────────────────────────────────────
+
+const labelSetOptions = [
+  { value: 'contract', label: 'Contract', icon: 'https://api.dicebear.com/7.x/shapes/svg?seed=contract', iconSize: 24 },
+  { value: 'nda', label: 'NDA', icon: 'https://api.dicebear.com/7.x/shapes/svg?seed=nda', iconSize: 24 },
+  { value: 'amendment', label: 'Amendment', icon: 'https://api.dicebear.com/7.x/shapes/svg?seed=amendment' },
+];
+
+export const IconSize: Story = {
+  name: 'Icon Size',
+  render: () => {
+    const [val, setVal] = useState<string | null>(null);
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <div style={{ fontSize: 13, color: '#64748b' }}>
+          Component-level <code>iconSize=20</code> with per-option override to 24
+        </div>
+        <Dropdown
+          mode="select"
+          options={labelSetOptions}
+          value={val}
+          onChange={(v) => setVal(v)}
+          placeholder="Select label"
+          iconSize={20}
+          aria-label="Icon size demo"
+        />
+      </div>
+    );
+  },
+};

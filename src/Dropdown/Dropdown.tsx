@@ -21,6 +21,9 @@ export interface DropdownOption<T extends string | number = string> {
   label: string;
   /** Optional icon — a ReactNode (e.g., a Lucide icon) or image URL string. */
   icon?: ReactNode | string;
+  /** Override icon size in px for this option. Falls back to the
+   *  component-level `iconSize` prop, then to 16. */
+  iconSize?: number;
   /** Optional secondary text shown below the label in the menu. */
   description?: string;
   /** Disables this individual option. */
@@ -81,6 +84,10 @@ export interface DropdownProps<T extends string | number = string> {
 
   /** Debounce interval in ms for onSearchChange. Defaults to 300. */
   searchDebounceMs?: number;
+
+  /** Default icon size in px for option icons. Individual options can
+   *  override via their own `iconSize`. Defaults to 16. */
+  iconSize?: number;
 
   /** Makes the dropdown fill its container width. */
   fluid?: boolean;
@@ -318,6 +325,7 @@ function DropdownInner<T extends string | number = string>(
     searchable = false,
     onSearchChange,
     searchDebounceMs = 300,
+    iconSize,
     fluid = false,
     upward = false,
     align = 'left',
@@ -732,9 +740,13 @@ function DropdownInner<T extends string | number = string>(
 
   // ─── Render helpers ───────────────────────────────────────────────────
 
-  const renderIcon = (icon: ReactNode | string) => {
+  const renderIcon = (icon: ReactNode | string, size?: number) => {
+    const sizeStyle = size ? { '--oc-dropdown-icon-size': `${size}px` } as React.CSSProperties : undefined;
     if (typeof icon === 'string') {
-      return <img src={icon} alt="" className="oc-dropdown__option-icon-img" />;
+      return <img src={icon} alt="" className="oc-dropdown__option-icon-img" style={sizeStyle} />;
+    }
+    if (size) {
+      return <span style={sizeStyle}>{icon}</span>;
     }
     return icon;
   };
@@ -780,7 +792,7 @@ function DropdownInner<T extends string | number = string>(
         <div className="oc-dropdown__trigger-content">
           {selectedOpt.icon && (
             <span className="oc-dropdown__trigger-icon">
-              {renderIcon(selectedOpt.icon)}
+              {renderIcon(selectedOpt.icon, selectedOpt.iconSize ?? iconSize)}
             </span>
           )}
           <span className="oc-dropdown__value">{selectedOpt.label}</span>
@@ -961,7 +973,7 @@ function DropdownInner<T extends string | number = string>(
         >
           {opt.icon && (
             <span className="oc-dropdown__option-icon">
-              {renderIcon(opt.icon)}
+              {renderIcon(opt.icon, opt.iconSize ?? iconSize)}
             </span>
           )}
           <div className="oc-dropdown__option-content">

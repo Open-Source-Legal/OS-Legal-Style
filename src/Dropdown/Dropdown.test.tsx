@@ -903,3 +903,62 @@ describe('Dropdown — displayName', () => {
     expect(Dropdown.Header.displayName).toBe('Dropdown.Header');
   });
 });
+
+// ─── iconSize ─────────────────────────────────────────────────────────────
+
+describe('Dropdown — iconSize', () => {
+  it('applies component-level iconSize to image icons', () => {
+    const opts: DropdownOption[] = [
+      { value: 'a', label: 'A', icon: 'https://example.com/logo.png' },
+    ];
+    const { container } = render(
+      <Dropdown mode="select" options={opts} iconSize={24} />
+    );
+    fireEvent.click(screen.getByRole('combobox'));
+
+    const img = container.querySelector('.oc-dropdown__option-icon-img') as HTMLImageElement;
+    expect(img).toBeDefined();
+    expect(img.style.getPropertyValue('--oc-dropdown-icon-size')).toBe('24px');
+  });
+
+  it('applies per-option iconSize overriding component-level', () => {
+    const opts: DropdownOption[] = [
+      { value: 'a', label: 'A', icon: 'https://example.com/a.png', iconSize: 32 },
+      { value: 'b', label: 'B', icon: 'https://example.com/b.png' },
+    ];
+    const { container } = render(
+      <Dropdown mode="select" options={opts} iconSize={20} />
+    );
+    fireEvent.click(screen.getByRole('combobox'));
+
+    const imgs = container.querySelectorAll('.oc-dropdown__option-icon-img') as NodeListOf<HTMLImageElement>;
+    expect(imgs[0].style.getPropertyValue('--oc-dropdown-icon-size')).toBe('32px');
+    expect(imgs[1].style.getPropertyValue('--oc-dropdown-icon-size')).toBe('20px');
+  });
+
+  it('does not set custom property when no iconSize is specified', () => {
+    const opts: DropdownOption[] = [
+      { value: 'a', label: 'A', icon: 'https://example.com/logo.png' },
+    ];
+    const { container } = render(
+      <Dropdown mode="select" options={opts} />
+    );
+    fireEvent.click(screen.getByRole('combobox'));
+
+    const img = container.querySelector('.oc-dropdown__option-icon-img') as HTMLImageElement;
+    expect(img.style.getPropertyValue('--oc-dropdown-icon-size')).toBe('');
+  });
+
+  it('applies iconSize to trigger icon for selected option', () => {
+    const opts: DropdownOption[] = [
+      { value: 'a', label: 'A', icon: 'https://example.com/logo.png', iconSize: 24 },
+    ];
+    const { container } = render(
+      <Dropdown mode="select" options={opts} value="a" />
+    );
+
+    const triggerImg = container.querySelector('.oc-dropdown__trigger-icon .oc-dropdown__option-icon-img') as HTMLImageElement;
+    expect(triggerImg).toBeDefined();
+    expect(triggerImg.style.getPropertyValue('--oc-dropdown-icon-size')).toBe('24px');
+  });
+});
