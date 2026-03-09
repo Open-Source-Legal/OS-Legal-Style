@@ -130,6 +130,12 @@ export interface DropdownProps<T extends string | number = string> {
   /** Called when the dropdown closes. */
   onClose?: () => void;
 
+  /** Called when focus leaves the dropdown's DOM tree (trigger + menu).
+   *  Fires for tab-away, click-outside, and programmatic focus changes —
+   *  even when the menu was never opened. Internal focus transfers between
+   *  trigger and menu are suppressed. */
+  onBlur?: (event: React.FocusEvent) => void;
+
   /** Children — used for compound component pattern (Dropdown.Item, etc.) */
   children?: ReactNode;
 }
@@ -326,6 +332,7 @@ function DropdownInner<T extends string | number = string>(
     'aria-labelledby': ariaLabelledBy,
     onOpen,
     onClose,
+    onBlur,
     children,
   }: DropdownProps<T>,
   ref: React.ForwardedRef<HTMLDivElement>
@@ -1058,6 +1065,24 @@ function DropdownInner<T extends string | number = string>(
     }
   }, [isOpen, mode]);
 
+  // Handle focus leaving the entire dropdown tree
+  const handleFocusOut = useCallback(
+    (e: React.FocusEvent) => {
+      if (!onBlur) return;
+      // relatedTarget is the element receiving focus. If it's inside this
+      // container we are just moving between trigger ↔ menu — suppress.
+      if (
+        containerRef.current &&
+        e.relatedTarget instanceof Node &&
+        containerRef.current.contains(e.relatedTarget)
+      ) {
+        return;
+      }
+      onBlur(e);
+    },
+    [onBlur]
+  );
+
   const rootClasses = [
     'oc-dropdown',
     `oc-dropdown--${mode}`,
@@ -1080,6 +1105,7 @@ function DropdownInner<T extends string | number = string>(
       className={rootClasses}
       style={style}
       onKeyDown={mode === 'menu' ? handleMenuKeyDown : handleKeyDown}
+      onBlur={handleFocusOut}
     >
       {renderTriggerElement()}
       {renderMenu()}
