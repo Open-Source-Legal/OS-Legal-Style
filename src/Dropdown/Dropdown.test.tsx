@@ -969,6 +969,33 @@ describe('Dropdown — Show description in trigger', () => {
   });
 });
 
+// ─── Size prop ───────────────────────────────────────────────────────────
+
+describe('Dropdown — Size', () => {
+  it('defaults to md size (no size class on root)', () => {
+    const { container } = renderDropdown();
+    expect(container.firstElementChild?.className).not.toContain('oc-dropdown--sm');
+    expect(container.firstElementChild?.className).not.toContain('oc-dropdown--lg');
+  });
+
+  it('applies sm size class', () => {
+    const { container } = renderDropdown({ size: 'sm' });
+    expect(container.firstElementChild?.className).toContain('oc-dropdown--sm');
+  });
+
+  it('applies lg size class', () => {
+    const { container } = renderDropdown({ size: 'lg' });
+    expect(container.firstElementChild?.className).toContain('oc-dropdown--lg');
+  });
+
+  it('does not apply size class for md (default)', () => {
+    const { container } = renderDropdown({ size: 'md' });
+    expect(container.firstElementChild?.className).not.toContain('oc-dropdown--sm');
+    expect(container.firstElementChild?.className).not.toContain('oc-dropdown--md');
+    expect(container.firstElementChild?.className).not.toContain('oc-dropdown--lg');
+  });
+});
+
 // ─── displayName ─────────────────────────────────────────────────────────
 
 describe('Dropdown — displayName', () => {

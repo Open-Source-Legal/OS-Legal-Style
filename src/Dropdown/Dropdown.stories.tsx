@@ -514,6 +514,106 @@ export const CustomTrigger: Story = {
   },
 };
 
+// ─── Size Variants ──────────────────────────────────────────────────────
+
+export const SizeSmall: Story = {
+  args: {
+    mode: 'select',
+    options: embeddingModels,
+    placeholder: 'Small dropdown',
+    'aria-label': 'Small dropdown',
+    size: 'sm',
+    fluid: true,
+  },
+};
+
+export const SizeMedium: Story = {
+  args: {
+    mode: 'select',
+    options: embeddingModels,
+    placeholder: 'Medium dropdown (default)',
+    'aria-label': 'Medium dropdown',
+    size: 'md',
+    fluid: true,
+  },
+};
+
+export const SizeLarge: Story = {
+  args: {
+    mode: 'select',
+    options: embeddingModels,
+    placeholder: 'Large dropdown',
+    'aria-label': 'Large dropdown',
+    size: 'lg',
+    fluid: true,
+  },
+};
+
+export const SizeComparison: Story = {
+  render: () => {
+    const [smVal, setSmVal] = useState<string | null>(null);
+    const [mdVal, setMdVal] = useState<string | null>(null);
+    const [lgVal, setLgVal] = useState<string | null>(null);
+
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <div>
+          <div style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#94a3b8', marginBottom: 8 }}>
+            Small (sm)
+          </div>
+          <Dropdown
+            mode="select"
+            size="sm"
+            options={embeddingModels}
+            value={smVal}
+            onChange={(v) => setSmVal(v as string | null)}
+            placeholder="Compact filter"
+            aria-label="Small"
+            fluid
+          />
+        </div>
+        <div>
+          <div style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#94a3b8', marginBottom: 8 }}>
+            Medium (md) — default
+          </div>
+          <Dropdown
+            mode="select"
+            size="md"
+            options={embeddingModels}
+            value={mdVal}
+            onChange={(v) => setMdVal(v as string | null)}
+            placeholder="Standard select"
+            aria-label="Medium"
+            fluid
+          />
+        </div>
+        <div>
+          <div style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#94a3b8', marginBottom: 8 }}>
+            Large (lg)
+          </div>
+          <Dropdown
+            mode="select"
+            size="lg"
+            options={embeddingModels}
+            value={lgVal}
+            onChange={(v) => setLgVal(v as string | null)}
+            placeholder="Prominent select"
+            aria-label="Large"
+            fluid
+          />
+        </div>
+      </div>
+    );
+  },
+  decorators: [
+    (Story) => (
+      <div style={{ width: '320px', minHeight: '500px', padding: '20px' }}>
+        <Story />
+      </div>
+    ),
+  ],
+};
+
 // ─── State variations ────────────────────────────────────────────────────
 
 export const Loading: Story = {

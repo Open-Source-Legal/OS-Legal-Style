@@ -12,6 +12,34 @@ export const dropdownStyles = `
   width: 100%;
 }
 
+/* ─── Size variants ────────────────────────────────────────────────────── */
+
+.oc-dropdown--sm .oc-dropdown__trigger {
+  min-height: 30px;
+  padding: 4px 8px;
+  font-size: var(--oc-font-size-xs);
+}
+
+.oc-dropdown--lg .oc-dropdown__trigger {
+  min-height: 44px;
+  padding: 8px 16px;
+  font-size: var(--oc-font-size-md);
+}
+
+.oc-dropdown--sm .oc-dropdown__option,
+.oc-dropdown--sm .oc-dropdown__item {
+  min-height: 30px;
+  padding: 4px 8px;
+  font-size: var(--oc-font-size-xs);
+}
+
+.oc-dropdown--lg .oc-dropdown__option,
+.oc-dropdown--lg .oc-dropdown__item {
+  min-height: 44px;
+  padding: 10px 16px;
+  font-size: var(--oc-font-size-md);
+}
+
 /* ─── Trigger ──────────────────────────────────────────────────────────── */
 
 .oc-dropdown__trigger {

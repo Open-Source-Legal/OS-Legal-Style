@@ -43,9 +43,15 @@ export interface TriggerRenderProps<T extends string | number = string> {
 
 export type DropdownMode = 'menu' | 'select' | 'multiselect';
 
+export type DropdownSize = 'sm' | 'md' | 'lg';
+
 export interface DropdownProps<T extends string | number = string> {
   /** Behavioral mode. Determines selection semantics and ARIA role. */
   mode: DropdownMode;
+
+  /** Visual density size. Controls trigger height, padding, and font size.
+   *  Defaults to 'md'. */
+  size?: DropdownSize;
 
   /** Option definitions. Not required for mode="menu" when using
    *  Dropdown.Item children directly. */
@@ -322,6 +328,7 @@ function countMenuItems(children: ReactNode): number {
 function DropdownInner<T extends string | number = string>(
   {
     mode,
+    size = 'md',
     options = [],
     value,
     defaultValue,
@@ -1115,6 +1122,7 @@ function DropdownInner<T extends string | number = string>(
   const rootClasses = [
     'oc-dropdown',
     `oc-dropdown--${mode}`,
+    size !== 'md' && `oc-dropdown--${size}`,
     fluid && 'oc-dropdown--fluid',
     isOpen && 'oc-dropdown--open',
     disabled && 'oc-dropdown--disabled',
