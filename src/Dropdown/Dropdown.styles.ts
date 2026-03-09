@@ -107,6 +107,22 @@ export const dropdownStyles = `
   color: var(--oc-fg-primary);
 }
 
+.oc-dropdown__trigger-value-group {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.oc-dropdown__trigger-description {
+  font-size: var(--oc-font-size-xs);
+  color: var(--oc-fg-secondary);
+  line-height: var(--oc-line-height-normal);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .oc-dropdown__placeholder {
   flex: 1;
   white-space: nowrap;
@@ -428,6 +444,12 @@ export const dropdownStyles = `
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.oc-dropdown--wrap-descriptions .oc-dropdown__option-description {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
 }
 
 .oc-dropdown__option--selected .oc-dropdown__option-description {

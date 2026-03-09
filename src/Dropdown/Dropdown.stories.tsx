@@ -559,6 +559,52 @@ export const CustomEmptyState: Story = {
   },
 };
 
+// ─── Description Features ───────────────────────────────────────────
+
+const embeddingModelsWithDescriptions = [
+  { value: 'openai-3-small', label: 'text-embedding-3-small', description: 'Standard text embedding model (384 dimensions)' },
+  { value: 'openai-3-large', label: 'text-embedding-3-large', description: 'Higher-quality embeddings with configurable dimensions (up to 3072)' },
+  { value: 'cohere-v3', label: 'Cohere Embed v3', description: 'Multilingual model with strong retrieval performance' },
+  { value: 'bge-large', label: 'BGE Large EN v1.5', description: 'Open-source English embedding model from BAAI (1024 dimensions)' },
+];
+
+export const WrappedDescriptions: Story = {
+  render: () => {
+    const [value, setValue] = useState<string | null>(null);
+    return (
+      <Dropdown
+        mode="select"
+        options={embeddingModelsWithDescriptions}
+        value={value}
+        onChange={(val) => setValue(val as string | null)}
+        placeholder="Select embedding model"
+        aria-label="Embedding model"
+        wrapDescriptions
+        fluid
+      />
+    );
+  },
+};
+
+export const DescriptionInTrigger: Story = {
+  render: () => {
+    const [value, setValue] = useState<string>('openai-3-small');
+    return (
+      <Dropdown
+        mode="select"
+        options={embeddingModelsWithDescriptions}
+        value={value}
+        onChange={(val) => setValue(val as string)}
+        placeholder="Select embedding model"
+        aria-label="Embedding model"
+        wrapDescriptions
+        showDescriptionInTrigger
+        fluid
+      />
+    );
+  },
+};
+
 // ─── All Modes Side-by-Side ──────────────────────────────────────────────
 
 export const AllModes: Story = {
