@@ -136,6 +136,14 @@ export interface DropdownProps<T extends string | number = string> {
    *  trigger and menu are suppressed. */
   onBlur?: (event: React.FocusEvent) => void;
 
+  /** Allow option description text to wrap instead of truncating.
+   *  When false (default), descriptions are single-line with ellipsis. */
+  wrapDescriptions?: boolean;
+
+  /** Show the selected option's description in the trigger alongside
+   *  the label. Only applies in "select" mode with the default trigger. */
+  showDescriptionInTrigger?: boolean;
+
   /** Children — used for compound component pattern (Dropdown.Item, etc.) */
   children?: ReactNode;
 }
@@ -325,6 +333,8 @@ function DropdownInner<T extends string | number = string>(
     renderOption,
     renderTag,
     renderEmpty,
+    wrapDescriptions = false,
+    showDescriptionInTrigger = false,
     maxMenuHeight = 300,
     className = '',
     style,
@@ -783,7 +793,14 @@ function DropdownInner<T extends string | number = string>(
               {renderIcon(selectedOpt.icon)}
             </span>
           )}
-          <span className="oc-dropdown__value">{selectedOpt.label}</span>
+          {showDescriptionInTrigger && selectedOpt.description ? (
+            <div className="oc-dropdown__trigger-value-group">
+              <span className="oc-dropdown__value">{selectedOpt.label}</span>
+              <span className="oc-dropdown__trigger-description">{selectedOpt.description}</span>
+            </div>
+          ) : (
+            <span className="oc-dropdown__value">{selectedOpt.label}</span>
+          )}
         </div>
       );
     }
@@ -1089,6 +1106,7 @@ function DropdownInner<T extends string | number = string>(
     fluid && 'oc-dropdown--fluid',
     isOpen && 'oc-dropdown--open',
     disabled && 'oc-dropdown--disabled',
+    wrapDescriptions && 'oc-dropdown--wrap-descriptions',
     className,
   ].filter(Boolean).join(' ');
 

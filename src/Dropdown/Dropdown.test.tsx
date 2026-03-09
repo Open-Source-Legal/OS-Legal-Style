@@ -890,6 +890,85 @@ describe('Dropdown — onBlur', () => {
   });
 });
 
+// ─── Description features ─────────────────────────────────────────────
+
+describe('Dropdown — Description wrapping', () => {
+  const descOptions: DropdownOption[] = [
+    { value: 'a', label: 'Model A', description: 'Standard text embedding model (384 dimensions)' },
+    { value: 'b', label: 'Model B', description: 'Large model' },
+  ];
+
+  it('applies wrap-descriptions class when wrapDescriptions is true', () => {
+    const { container } = renderDropdown({ options: descOptions, wrapDescriptions: true });
+    expect(container.firstElementChild?.className).toContain('wrap-descriptions');
+  });
+
+  it('does not apply wrap-descriptions class by default', () => {
+    const { container } = renderDropdown({ options: descOptions });
+    expect(container.firstElementChild?.className).not.toContain('wrap-descriptions');
+  });
+
+  it('renders descriptions in menu options', () => {
+    renderDropdown({ options: descOptions, wrapDescriptions: true });
+    fireEvent.click(screen.getByRole('combobox'));
+
+    expect(screen.getByText('Standard text embedding model (384 dimensions)')).toBeDefined();
+    expect(screen.getByText('Large model')).toBeDefined();
+  });
+});
+
+describe('Dropdown — Show description in trigger', () => {
+  const descOptions: DropdownOption[] = [
+    { value: 'a', label: 'Model A', description: 'Standard embedding model' },
+    { value: 'b', label: 'Model B' },
+  ];
+
+  it('shows description in trigger when showDescriptionInTrigger is true and option has description', () => {
+    renderDropdown({
+      options: descOptions,
+      value: 'a',
+      showDescriptionInTrigger: true,
+    });
+
+    expect(screen.getByText('Model A')).toBeDefined();
+    expect(screen.getByText('Standard embedding model')).toBeDefined();
+  });
+
+  it('does not show description in trigger by default', () => {
+    renderDropdown({
+      options: descOptions,
+      value: 'a',
+    });
+
+    expect(screen.getByText('Model A')).toBeDefined();
+    expect(screen.queryByText('Standard embedding model')).toBeNull();
+  });
+
+  it('does not show description in trigger when selected option has no description', () => {
+    renderDropdown({
+      options: descOptions,
+      value: 'b',
+      showDescriptionInTrigger: true,
+    });
+
+    expect(screen.getByText('Model B')).toBeDefined();
+    // No description element should be rendered
+    const trigger = screen.getByRole('combobox');
+    expect(trigger.querySelector('.oc-dropdown__trigger-description')).toBeNull();
+  });
+
+  it('renders trigger-value-group class when showing description', () => {
+    renderDropdown({
+      options: descOptions,
+      value: 'a',
+      showDescriptionInTrigger: true,
+    });
+
+    const trigger = screen.getByRole('combobox');
+    expect(trigger.querySelector('.oc-dropdown__trigger-value-group')).not.toBeNull();
+  });
+});
+
 // ─── displayName ─────────────────────────────────────────────────────────
 
 describe('Dropdown — displayName', () => {
