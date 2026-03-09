@@ -181,6 +181,7 @@ export type {
   DropdownProps,
   DropdownOption,
   DropdownMode,
+  DropdownSize,
   DropdownItemProps,
   DropdownHeaderProps,
   TriggerRenderProps,
