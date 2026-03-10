@@ -36,6 +36,7 @@ A comprehensive plan for building out the component library to support a modern 
 - `SourceCard` / `SourcePill` - Document citations
 - `Citation` - Inline reference markers
 - `ExtractCard` / `ExtractList` - Extract job cards with status
+- `Table` - Compound table component with sticky headers, frozen columns, sorting, virtualization
 - `DataGrid` - Tabular data display with cell actions, sorting, selection
 
 **Forms (Phase 1)**
@@ -446,6 +447,7 @@ Right-click menu.
 8. **DocumentCard** - Document management
 9. **DropZone** - File uploads
 10. ~~**DataGrid**~~ ✅ - Data display with cell actions, sorting, selection
+11. ~~**Table**~~ ✅ - Compound table with sticky headers, frozen columns, sorting, virtualization
 
 ### Tier 3 (Collaboration)
 11. **ThreadCard** - Discussions

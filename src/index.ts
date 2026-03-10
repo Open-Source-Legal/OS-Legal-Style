@@ -461,6 +461,27 @@ export type {
 export { ExtractCard, ExtractList, extractCardStyles } from './ExtractCard';
 export type { ExtractCardProps, ExtractListProps, ExtractStatus } from './ExtractCard';
 
+// Table
+export { Table, tableStyles } from './Table';
+export type {
+  TableProps,
+  TableHeadProps,
+  TableHeadCellProps,
+  TableBodyProps,
+  TableRowProps,
+  TableCellProps,
+  TableFooterProps,
+  TableScrollContainerProps,
+  VirtualizedTableBodyProps,
+  VirtualizedTableProps,
+  TableVariant,
+  TableSize,
+  TableLayout,
+  StickyDirection,
+  CellAlign,
+} from './Table';
+export type { SortDirection as TableSortDirection } from './Table';
+
 // DataGrid
 export { DataGrid, dataGridStyles } from './DataGrid';
 export type {
@@ -568,6 +589,7 @@ import { threadStyles } from './Thread';
 import { discussionStyles } from './Discussion';
 import { fileSystemStyles } from './FileSystem';
 import { extractCardStyles } from './ExtractCard';
+import { tableStyles } from './Table';
 import { dataGridStyles } from './DataGrid';
 import { nodeStyles } from './Node';
 import { edgeStyles } from './Edge';
@@ -672,6 +694,8 @@ ${discussionStyles}
 ${fileSystemStyles}
 
 ${extractCardStyles}
+
+${tableStyles}
 
 ${dataGridStyles}
 
