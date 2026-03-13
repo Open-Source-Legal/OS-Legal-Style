@@ -162,6 +162,17 @@ export const tableStyles = `
   background-color: #f8fafc;
 }
 
+/* Frozen column + sticky header: needs z-index above other sticky-header
+   cells (z-index 10) so scrolling headers don't paint over the frozen one.
+   Specificity must beat .oc-table--sticky-header .oc-table__head-cell. */
+.oc-table--sticky-header .oc-table__head-cell--sticky-left {
+  z-index: 12;
+}
+
+.oc-table--sticky-header .oc-table__head-cell--sticky-right {
+  z-index: 12;
+}
+
 .oc-table__head-cell--sticky-left::after,
 .oc-table__cell--sticky-left::after {
   content: '';
