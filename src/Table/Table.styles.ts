@@ -76,13 +76,9 @@ export const tableStyles = `
   user-select: none;
 }
 
-/* Sticky header */
-.oc-table--sticky-header .oc-table__head .oc-table__row {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-}
-
+/* Sticky header — applied per-cell, not per-row, so that
+   cells with sticky="left" can also stick horizontally
+   (a sticky tr would scroll horizontally, dragging its children along). */
 .oc-table--sticky-header .oc-table__head-cell {
   position: sticky;
   top: 0;
