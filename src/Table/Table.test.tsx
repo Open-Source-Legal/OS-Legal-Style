@@ -3,6 +3,7 @@ import React from 'react';
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import { Table } from './Table';
+import { tableStyles } from './Table.styles';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────
 
@@ -894,6 +895,62 @@ describe('Table — displayName', () => {
     expect(Table.ScrollContainer.displayName).toBe('Table.ScrollContainer');
     expect(Table.VirtualizedBody.displayName).toBe('Table.VirtualizedBody');
     expect(Table.Virtualized.displayName).toBe('Table.Virtualized');
+  });
+});
+
+// ─── Frozen column + sticky header ──────────────────────────────────────
+
+describe('Table — Frozen column with sticky header', () => {
+  it('head cell with sticky="left" gets sticky-left class inside sticky-header table', () => {
+    const { container } = render(
+      <Table.ScrollContainer style={{ maxWidth: 400 }}>
+        <Table stickyHeader>
+          <Table.Head>
+            <Table.Row>
+              <Table.HeadCell sticky="left" width="120px">Name</Table.HeadCell>
+              <Table.HeadCell width="150px">Status</Table.HeadCell>
+              <Table.HeadCell width="150px">Date</Table.HeadCell>
+            </Table.Row>
+          </Table.Head>
+          <Table.Body>
+            <Table.Row>
+              <Table.Cell sticky="left">Doc A</Table.Cell>
+              <Table.Cell>Active</Table.Cell>
+              <Table.Cell>2024-01-15</Table.Cell>
+            </Table.Row>
+          </Table.Body>
+        </Table>
+      </Table.ScrollContainer>
+    );
+
+    // Table should have sticky-header class
+    const table = container.querySelector('.oc-table--sticky-header');
+    expect(table).not.toBeNull();
+
+    // Head cell should have sticky-left class (provides left: 0)
+    const frozenHeadCell = container.querySelector('.oc-table__head-cell--sticky-left');
+    expect(frozenHeadCell).not.toBeNull();
+
+    // Body cell should also have sticky-left class
+    const frozenBodyCell = container.querySelector('.oc-table__cell--sticky-left');
+    expect(frozenBodyCell).not.toBeNull();
+  });
+
+  it('header row does not get position:sticky (cells handle it individually)', () => {
+    // Verify the CSS does not contain a rule that makes the header tr sticky.
+    // A sticky tr would prevent child th elements from sticking horizontally,
+    // because the tr only sticks vertically (top:0) and drags children along
+    // when scrolling horizontally.
+    expect(tableStyles).not.toMatch(
+      /\.oc-table--sticky-header\s+\.oc-table__head\s+\.oc-table__row\s*\{[^}]*position:\s*sticky/
+    );
+  });
+
+  it('CSS makes individual head cells sticky (not the row)', () => {
+    // The head-cell rule should contain position: sticky
+    expect(tableStyles).toMatch(
+      /\.oc-table--sticky-header\s+\.oc-table__head-cell\s*\{[^}]*position:\s*sticky/
+    );
   });
 });
 
