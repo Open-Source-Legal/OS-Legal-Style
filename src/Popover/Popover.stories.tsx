@@ -17,7 +17,12 @@ const meta: Meta<typeof Popover> = {
   argTypes: {
     placement: {
       control: 'select',
-      options: ['top', 'bottom', 'left', 'right'],
+      options: [
+        'top', 'top-start', 'top-end',
+        'bottom', 'bottom-start', 'bottom-end',
+        'left', 'left-start', 'left-end',
+        'right', 'right-start', 'right-end',
+      ],
     },
     trigger: {
       control: 'select',
@@ -146,6 +151,59 @@ export const WithActions: Story = {
         Share
       </button>
     </Popover>
+  ),
+};
+
+export const BottomEnd: Story = {
+  render: () => (
+    <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%', minWidth: 400 }}>
+      <Popover
+        placement="bottom-end"
+        content={
+          <div style={{ margin: '-16px', minWidth: 180 }}>
+            {['Profile', 'Settings', 'Sign out'].map((item, i) => (
+              <button
+                key={item}
+                style={{
+                  display: 'block',
+                  width: '100%',
+                  padding: '10px 16px',
+                  background: 'transparent',
+                  border: 'none',
+                  textAlign: 'left',
+                  cursor: 'pointer',
+                  color: '#1A1A1A',
+                  fontSize: 14,
+                  borderTop: i > 0 ? '1px solid #E5E5E5' : 'none',
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.background = '#F8F8F8')}
+                onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+              >
+                {item}
+              </button>
+            ))}
+          </div>
+        }
+      >
+        <div
+          style={{
+            width: 36,
+            height: 36,
+            borderRadius: '50%',
+            background: '#E85A4F',
+            color: 'white',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            fontWeight: 600,
+            fontSize: 14,
+          }}
+        >
+          JD
+        </div>
+      </Popover>
+    </div>
   ),
 };
 
