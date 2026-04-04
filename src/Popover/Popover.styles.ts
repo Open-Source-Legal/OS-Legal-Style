@@ -32,15 +32,47 @@ export const popoverStyles = `
   transform: translateX(-50%) translateY(-100%);
 }
 
+.oc-popover--top-start {
+  transform: translateY(-100%);
+}
+
+.oc-popover--top-end {
+  transform: translateX(-100%) translateY(-100%);
+}
+
 .oc-popover--bottom {
   transform: translateX(-50%);
+}
+
+.oc-popover--bottom-start {
+  transform: none;
+}
+
+.oc-popover--bottom-end {
+  transform: translateX(-100%);
 }
 
 .oc-popover--left {
   transform: translateX(-100%) translateY(-50%);
 }
 
+.oc-popover--left-start {
+  transform: translateX(-100%);
+}
+
+.oc-popover--left-end {
+  transform: translateX(-100%) translateY(-100%);
+}
+
 .oc-popover--right {
   transform: translateY(-50%);
+}
+
+.oc-popover--right-start {
+  transform: none;
+}
+
+.oc-popover--right-end {
+  transform: translateY(-100%);
 }
 `;

@@ -1,7 +1,11 @@
 import React, { forwardRef, ReactNode, HTMLAttributes, useState, useRef, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 
-export type PopoverPlacement = 'top' | 'bottom' | 'left' | 'right';
+export type PopoverPlacement =
+  | 'top' | 'top-start' | 'top-end'
+  | 'bottom' | 'bottom-start' | 'bottom-end'
+  | 'left' | 'left-start' | 'left-end'
+  | 'right' | 'right-start' | 'right-end';
 export type PopoverTrigger = 'click' | 'hover';
 
 export interface PopoverProps extends Omit<HTMLAttributes<HTMLDivElement>, 'content'> {
@@ -63,16 +67,48 @@ export const Popover = forwardRef<HTMLDivElement, PopoverProps>(
           top = rect.top + scrollY - 8;
           left = rect.left + scrollX + rect.width / 2;
           break;
+        case 'top-start':
+          top = rect.top + scrollY - 8;
+          left = rect.left + scrollX;
+          break;
+        case 'top-end':
+          top = rect.top + scrollY - 8;
+          left = rect.right + scrollX;
+          break;
         case 'bottom':
           top = rect.bottom + scrollY + 8;
           left = rect.left + scrollX + rect.width / 2;
+          break;
+        case 'bottom-start':
+          top = rect.bottom + scrollY + 8;
+          left = rect.left + scrollX;
+          break;
+        case 'bottom-end':
+          top = rect.bottom + scrollY + 8;
+          left = rect.right + scrollX;
           break;
         case 'left':
           top = rect.top + scrollY + rect.height / 2;
           left = rect.left + scrollX - 8;
           break;
+        case 'left-start':
+          top = rect.top + scrollY;
+          left = rect.left + scrollX - 8;
+          break;
+        case 'left-end':
+          top = rect.bottom + scrollY;
+          left = rect.left + scrollX - 8;
+          break;
         case 'right':
           top = rect.top + scrollY + rect.height / 2;
+          left = rect.right + scrollX + 8;
+          break;
+        case 'right-start':
+          top = rect.top + scrollY;
+          left = rect.right + scrollX + 8;
+          break;
+        case 'right-end':
+          top = rect.bottom + scrollY;
           left = rect.right + scrollX + 8;
           break;
       }
