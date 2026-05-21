@@ -125,17 +125,19 @@ export const searchBoxStyles = `
     flex-wrap: wrap;
   }
 
-  .oc-search-box__input {
-    flex: 1 1 100%;
-    order: 1;
-  }
-
   .oc-search-box__icon {
     order: 0;
   }
 
+  .oc-search-box__input {
+    order: 1;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
   .oc-search-box__button {
     order: 2;
+    flex: 1 1 100%;
     width: 100%;
     margin-top: 8px;
   }
