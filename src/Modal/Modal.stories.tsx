@@ -25,6 +25,12 @@ const meta: Meta<typeof Modal> = {
     closeOnEscape: {
       control: 'boolean',
     },
+    panelClassName: {
+      control: 'text',
+    },
+    overlayClassName: {
+      control: 'text',
+    },
   },
 };
 
@@ -233,6 +239,81 @@ export const WithOverlayClassName: Story = {
               }}
             >
               Got it
+            </button>
+          </ModalFooter>
+        </Modal>
+      </>
+    );
+  },
+};
+
+export const WithCustomPanelWidth: Story = {
+  render: () => {
+    const [open, setOpen] = useState(false);
+
+    return (
+      <>
+        <style>{`.batch-run-panel { border-top: 4px solid #E85A4F; }`}</style>
+        <button
+          onClick={() => setOpen(true)}
+          style={{
+            padding: '10px 20px',
+            background: '#E85A4F',
+            color: 'white',
+            border: 'none',
+            borderRadius: '8px',
+            cursor: 'pointer',
+            fontWeight: 500,
+          }}
+        >
+          Open Modal with Custom Panel
+        </button>
+
+        <Modal
+          open={open}
+          onClose={() => setOpen(false)}
+          size="sm"
+          panelClassName="batch-run-panel"
+          style={{ maxWidth: 520 }}
+        >
+          <ModalHeader
+            title="Batch Run Actions"
+            subtitle="Custom panel sizing through a public panel class"
+            onClose={() => setOpen(false)}
+          />
+          <ModalBody>
+            <p style={{ margin: 0 }}>
+              This modal uses <code>panelClassName</code> to apply a 520px max-width
+              without targeting the internal <code>.oc-modal</code> selector.
+            </p>
+          </ModalBody>
+          <ModalFooter>
+            <button
+              onClick={() => setOpen(false)}
+              style={{
+                padding: '8px 16px',
+                background: 'transparent',
+                color: '#1A1A1A',
+                border: '1px solid #E5E5E5',
+                borderRadius: '8px',
+                cursor: 'pointer',
+              }}
+            >
+              Cancel
+            </button>
+            <button
+              onClick={() => setOpen(false)}
+              style={{
+                padding: '8px 16px',
+                background: '#E85A4F',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontWeight: 500,
+              }}
+            >
+              Run
             </button>
           </ModalFooter>
         </Modal>
