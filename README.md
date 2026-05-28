@@ -176,6 +176,23 @@ function App() {
 />
 ```
 
+### Modal
+
+`className`, `panelClassName`, and `style` target the modal panel. `overlayClassName` targets the backdrop.
+
+```tsx
+<Modal
+  open={open}
+  onClose={onClose}
+  size="sm"
+  panelClassName="batch-run-panel"
+  style={{ maxWidth: 520 }}
+>
+  <ModalHeader title="Run batch action?" onClose={onClose} />
+  <ModalBody>Review the selected documents before continuing.</ModalBody>
+</Modal>
+```
+
 ### FilterTabs
 
 ```tsx

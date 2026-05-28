@@ -1,4 +1,4 @@
-import React, { forwardRef, ReactNode, HTMLAttributes, useEffect, useCallback } from 'react';
+import React, { forwardRef, ReactNode, HTMLAttributes, CSSProperties, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 
 export type ModalSize = 'sm' | 'md' | 'lg' | 'xl' | 'full' | 'fullscreen';
@@ -9,6 +9,13 @@ export interface ModalProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'
   size?: ModalSize;
   closeOnOverlay?: boolean;
   closeOnEscape?: boolean;
+  /** Applies to the modal panel. Use this for panel styling without targeting .oc-modal. */
+  className?: string;
+  /** Applies to the modal panel. Supports arbitrary panel sizing such as maxWidth. */
+  style?: CSSProperties;
+  /** Additional class name applied to the modal panel. */
+  panelClassName?: string;
+  /** Class name applied to the backdrop overlay. */
   overlayClassName?: string;
   children?: ReactNode;
 }
@@ -35,6 +42,7 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(
       closeOnEscape = true,
       overlayClassName = '',
       className = '',
+      panelClassName = '',
       children,
       ...props
     },
@@ -72,6 +80,7 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(
       'oc-modal',
       `oc-modal--${size}`,
       className,
+      panelClassName,
     ].filter(Boolean).join(' ');
 
     const overlayClasses = [
