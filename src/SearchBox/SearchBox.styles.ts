@@ -131,7 +131,12 @@ export const searchBoxStyles = `
 
   .oc-search-box__input {
     order: 1;
-    flex: 1 1 auto;
+    /* Zero flex-basis (matching the desktop base rule) keeps the input on the
+       first row beside the icon regardless of its intrinsic width, so the
+       leading icon is never stranded on a row of its own. A non-zero basis
+       (e.g. auto or 100%) lets the input's hypothetical size push it onto a
+       new flex line on narrow viewports. */
+    flex: 1 1 0;
     min-width: 0;
   }
 
