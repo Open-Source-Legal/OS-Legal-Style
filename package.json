@@ -55,7 +55,7 @@
     "storybook": "^10.1.10",
     "tsup": "^8.5.0",
     "typescript": "^5.0.0",
-    "vitest": "^3.0.0"
+    "vitest": "^4.1.0"
   },
   "keywords": [
     "react",
