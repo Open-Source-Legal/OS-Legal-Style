@@ -43,9 +43,8 @@ describe('SearchBox', () => {
     })();
 
     const ruleFor = (selector: string) => {
-      const re = new RegExp(
-        `${selector.replace(/[.]/g, '\\.')}\\s*\\{([^}]*)\\}`
-      );
+      const escapedSelector = selector.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const re = new RegExp(`${escapedSelector}\\s*\\{([^}]*)\\}`);
       const m = mobileBlock.match(re);
       expect(m, `expected a rule for ${selector}`).not.toBeNull();
       return m![1];
