@@ -122,3 +122,23 @@ export const CustomButtonContent: Story = {
     ),
   ],
 };
+
+/**
+ * At ≤480px the icon and input stay together on the first row and only the
+ * button wraps to a full-width second row. Regression coverage for the mobile
+ * layout reported in issues #27 and #33, where the leading search icon was
+ * stranded on its own line above the input.
+ */
+export const MobileLayout: Story = {
+  args: {
+    placeholder: 'Search across all legal knowledge, cases, and statutes...',
+    buttonText: 'Search',
+  },
+  decorators: [
+    (Story) => (
+      <div style={{ width: 320 }}>
+        <Story />
+      </div>
+    ),
+  ],
+};
