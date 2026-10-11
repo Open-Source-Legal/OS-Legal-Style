@@ -359,6 +359,63 @@ npm run lint          # Run ESLint
 npm run test          # Run tests
 ```
 
+## Staging releases on npm
+
+Publishing a GitHub release triggers `.github/workflows/publish.yml` to stage
+`@os-legal/ui` for review using npm trusted publishing (OIDC). The staged version
+becomes publicly available only after a maintainer approves it with 2FA. The
+release tag must point to the commit containing the intended `package.json`
+version and release workflow. The workflow uses Node 24 and explicitly installs
+`npm@^11.15.0` because staged publishing requires Node 22.14+ and npm 11.15.0+.
+
+In the package's [npm settings](https://www.npmjs.com/package/@os-legal/ui/access),
+configure a GitHub Actions trusted publisher with these exact values:
+
+| Field | Value |
+| --- | --- |
+| Organization or user | `Open-Source-Legal` |
+| Repository | `OS-Legal-Style` |
+| Workflow filename | `publish.yml` |
+| Environment name | `npm` |
+| Allowed actions | `npm stage publish` only; disable direct publishing and dist-tag management |
+
+The workflow already grants `id-token: write` and uses the GitHub environment
+`npm`. No `NPM_TOKEN` secret is needed. Newly created trusted publisher
+configurations must complete their first successful publish within two days;
+recreate an expired configuration before staging a release. See the
+[npm trusted publishing documentation](https://docs.npmjs.com/trusted-publishers/).
+
+Before releasing, confirm that the version is neither published nor pending
+approval in staging. Use npm 11.15.0+ and log in to an npm account with package
+access for the staging commands:
+
+```bash
+npm view @os-legal/ui versions --json
+npm stage list @os-legal/ui
+```
+
+After CI stages the package, review it in npm's **Staged Packages** tab or with
+the CLI. The stage ID appears in the staging output and staged package list:
+
+```bash
+npm stage view <stage-id>
+npm stage download <stage-id>
+```
+
+Once reviewed, approve it in npm's **Staged Packages** tab or run:
+
+```bash
+npm stage approve <stage-id>
+```
+
+Approval requires 2FA and publishes the reviewed version to the live registry.
+See the [npm staged publishing documentation](https://docs.npmjs.com/staged-publishing/).
+
+Re-running a failed release uses the workflow from the original release ref,
+so merging a workflow fix does not repair an existing release run. Create a
+new release with a tag containing the fix and an unused package version;
+published npm versions cannot be overwritten.
+
 ## License
 
 MIT © OpenContracts
